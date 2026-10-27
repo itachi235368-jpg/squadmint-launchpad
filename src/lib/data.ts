@@ -36,18 +36,18 @@ export const MINIONS: Minion[] = [
 
 export type Token = {
   ticker: string; name: string; emoji: string; mcap: number; change: number;
-  curve: number; level: number; age: string; holders: number; style: string; burned: number;
+  curve: number; level: number; pair: "SOL" | "USDC" | "USD1"; age: string; holders: number; style: string; burned: number;
 };
 
 export const TOKENS: Token[] = [
-  { ticker: "FROGZ", name: "Frog Zeus", emoji: "🐸", mcap: 412000, change: 48.2, curve: 92, level: 14, age: "3h", holders: 2140, style: "Pixel Art", burned: 4200000 },
-  { ticker: "BANANA", name: "Banana Brigade", emoji: "🍌", mcap: 188000, change: 22.1, curve: 71, level: 9, age: "6h", holders: 1022, style: "Cartoon", burned: 1800000 },
-  { ticker: "GOGGLE", name: "Goggle Gang", emoji: "🥽", mcap: 96000, change: -4.3, curve: 44, level: 6, age: "1h", holders: 512, style: "3D Render", burned: 600000 },
-  { ticker: "NEKO", name: "Cyber Neko", emoji: "🐱", mcap: 642000, change: 12.8, curve: 98, level: 21, age: "1d", holders: 4810, style: "Anime", burned: 9100000 },
-  { ticker: "RUGNT", name: "Rug Not", emoji: "🧶", mcap: 21000, change: 140.5, curve: 12, level: 2, age: "12m", holders: 88, style: "Doodle", burned: 50000 },
-  { ticker: "MOONK", name: "Moon Monk", emoji: "🧘", mcap: 305000, change: 6.4, curve: 85, level: 12, age: "9h", holders: 1760, style: "Cyberpunk", burned: 3300000 },
-  { ticker: "BLOB", name: "Blobbington", emoji: "🫠", mcap: 34000, change: 31.0, curve: 19, level: 3, age: "25m", holders: 140, style: "Cartoon", burned: 90000 },
-  { ticker: "DRGN", name: "Pocket Dragon", emoji: "🐉", mcap: 158000, change: -11.2, curve: 63, level: 8, age: "4h", holders: 890, style: "Pixel Art", burned: 1200000 },
+  { ticker: "FROGZ", pair: "SOL", name: "Frog Zeus", emoji: "🐸", mcap: 412000, change: 48.2, curve: 92, level: 14, age: "3h", holders: 2140, style: "Pixel Art", burned: 4200000 },
+  { ticker: "BANANA", pair: "USDC", name: "Banana Brigade", emoji: "🍌", mcap: 188000, change: 22.1, curve: 71, level: 9, age: "6h", holders: 1022, style: "Cartoon", burned: 1800000 },
+  { ticker: "GOGGLE", pair: "SOL", name: "Goggle Gang", emoji: "🥽", mcap: 96000, change: -4.3, curve: 44, level: 6, age: "1h", holders: 512, style: "3D Render", burned: 600000 },
+  { ticker: "NEKO", pair: "SOL", name: "Cyber Neko", emoji: "🐱", mcap: 642000, change: 12.8, curve: 98, level: 21, age: "1d", holders: 4810, style: "Anime", burned: 9100000 },
+  { ticker: "RUGNT", pair: "SOL", name: "Rug Not", emoji: "🧶", mcap: 8400, change: 140.5, curve: 12, level: 2, age: "12m", holders: 88, style: "Doodle", burned: 50000 },
+  { ticker: "MOONK", pair: "USD1", name: "Moon Monk", emoji: "🧘", mcap: 305000, change: 6.4, curve: 85, level: 12, age: "9h", holders: 1760, style: "Cyberpunk", burned: 3300000 },
+  { ticker: "BLOB", pair: "SOL", name: "Blobbington", emoji: "🫠", mcap: 6200, change: 31.0, curve: 19, level: 3, age: "25m", holders: 140, style: "Cartoon", burned: 90000 },
+  { ticker: "DRGN", pair: "USDC", name: "Pocket Dragon", emoji: "🐉", mcap: 158000, change: -11.2, curve: 63, level: 8, age: "4h", holders: 890, style: "Pixel Art", burned: 1200000 },
 ];
 
 export const fmtUsd = (n: number) =>
@@ -55,8 +55,9 @@ export const fmtUsd = (n: number) =>
 export const fmtNum = (n: number) =>
   n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : `${n}`;
 
-export function randomLog(tickers = TOKENS.map((t) => t.ticker)) {
-  const m = MINIONS[Math.floor(Math.random() * MINIONS.length)]!;
+export function randomLog(tickers = TOKENS.map((t) => t.ticker), only?: string) {
+  const pool = only ? MINIONS.filter((x) => x.id === only) : MINIONS;
+  const m = pool[Math.floor(Math.random() * pool.length)]!;
   const a = m.actions[Math.floor(Math.random() * m.actions.length)];
   const t = tickers[Math.floor(Math.random() * tickers.length)]!;
   return { id: Math.random().toString(36).slice(2), minion: m, ticker: t, text: a, time: new Date().toLocaleTimeString("en-GB") };
@@ -75,3 +76,8 @@ export function genCandles(n = 48, seed = 1) {
     return { o, c, h, l };
   });
 }
+
+export const SQUAD_THRESHOLD = 10000;
+export const squadActive = (t: Token) => t.mcap >= SQUAD_THRESHOLD;
+export const isTickerTaken = (ticker: string) =>
+  TOKENS.some((t) => t.ticker === ticker.trim().toUpperCase().replace(/^\$/, ""));

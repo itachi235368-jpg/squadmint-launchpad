@@ -37,13 +37,13 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.98 0.009 85);
-  --foreground: oklch(0.2 0.02 270);
+  --background: oklch(0.985 0.004 90);
+  --foreground: oklch(0.18 0.006 270);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 270);
+  --card-foreground: oklch(0.18 0.006 270);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.02 270);
-  --primary: oklch(0.24 0.04 275);
+  --primary: oklch(0.18 0.006 270);
   --primary-foreground: oklch(0.98 0.005 85);
   --secondary: oklch(0.955 0.012 85);
   --secondary-foreground: oklch(0.2 0.02 270);
@@ -55,8 +55,8 @@
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.58 0.14 155);
   --gold: oklch(0.6 0.12 75);
-  --border: oklch(0.9 0.012 85);
-  --input: oklch(0.92 0.01 85);
+  --border: oklch(0 0 0 / 0.07);
+  --input: oklch(0 0 0 / 0.1);
   --ring: oklch(0.66 0.13 70);
   --glow-primary: 0 20px 40px -20px color-mix(in oklab, var(--primary) 35%, transparent), 0 1px 2px color-mix(in oklab, var(--primary) 8%, transparent);
   --glow-accent: 0 12px 30px -12px color-mix(in oklab, var(--accent) 55%, transparent);
@@ -97,3 +97,25 @@
 @utility animate-blink { animation: blink 1s steps(1) infinite; }
 @utility animate-slidein { animation: slidein 0.35s ease-out; }
 @utility animate-floaty { animation: floaty 3s ease-in-out infinite; }
+
+@utility glass {
+  background: color-mix(in oklab, var(--card) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--card) 90%, transparent), 0 1px 2px oklch(0 0 0 / 0.04), 0 12px 32px -18px oklch(0 0 0 / 0.18);
+}
+@utility card-premium {
+  background: linear-gradient(180deg, var(--card), color-mix(in oklab, var(--card) 92%, var(--secondary)));
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 var(--card), 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -16px oklch(0 0 0 / 0.14);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+@utility lift {
+  &:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 var(--card), 0 2px 4px oklch(0 0 0 / 0.04), 0 22px 40px -20px oklch(0 0 0 / 0.22); }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes flash-up { 0% { background: color-mix(in oklab, var(--success) 22%, transparent); } 100% { background: transparent; } }
+@keyframes ring-pulse { 50% { opacity: .55; transform: translate(-50%, -50%) scale(1.06); } }
+@utility animate-marquee { animation: marquee 40s linear infinite; }
+@utility animate-flash { animation: flash-up 1.2s ease-out; }
+@utility animate-ring { animation: ring-pulse 3.2s ease-in-out infinite; }

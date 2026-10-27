@@ -21,48 +21,51 @@ export function PageHead({ kicker, title, sub }: { kicker: string; title: string
 export function CurveBar({ value }: { value: number }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-      <div className={cn("h-full rounded-full", value > 80 ? "bg-accent" : "bg-primary")} style={{ width: `${value}%` }} />
+      <div className={cn("h-full rounded-full bg-gradient-to-r transition-all", value > 80 ? "from-accent/60 to-accent" : "from-primary/50 to-primary")} style={{ width: `${value}%` }} />
     </div>
   );
 }
 
 export function SquadStatus({ t }: { t: Token }) {
   return squadActive(t) ? (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold text-success">
       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> Active Raid
     </span>
   ) : (
-    <span className="text-xs text-muted-foreground">Squad waiting for $10K</span>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" /> Squad waiting for $10K</span>
   );
 }
 
 export function PairBadge({ pair }: { pair: string }) {
-  return <span className="rounded-full border px-2 py-0.5 font-mono text-[10px]">{pair}</span>;
+  return <span className="rounded-full border bg-card px-2 py-0.5 font-mono text-[10px] font-semibold shadow-sm">{pair}</span>;
 }
 
 export function TokenCard({ t }: { t: Token }) {
+  const vol = t.mcap * 0.38, liq = t.mcap * 0.12;
   return (
-    <Link to="/token/$ticker" params={{ ticker: t.ticker }} className="group block rounded-2xl border bg-card p-5 transition hover:border-foreground/40">
+    <Link to="/token/$ticker" params={{ ticker: t.ticker }} className="card-premium lift group block rounded-2xl p-5">
       <div className="flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-full border bg-secondary text-xl">{t.emoji}</div>
+        <div className="grid h-11 w-11 place-items-center rounded-full bg-secondary text-xl ring-1 ring-border">{t.emoji}</div>
         <div className="min-w-0 flex-1">
-          <div className="font-display text-lg font-medium">{t.name}</div>
+          <div className="font-display text-lg font-medium leading-tight">{t.name}</div>
           <div className="font-mono text-xs text-muted-foreground">${t.ticker} · {t.age}</div>
         </div>
         <PairBadge pair={t.pair} />
       </div>
       <div className="mt-5 flex items-end justify-between">
         <div>
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Market cap</div>
-          <div className="font-mono text-lg">{fmtUsd(t.mcap)}</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Market cap</div>
+          <div className="font-mono text-xl font-semibold tracking-tight">{fmtUsd(t.mcap)}</div>
         </div>
-        <span className={cn("font-mono text-sm", t.change >= 0 ? "text-success" : "text-destructive")}>{t.change >= 0 ? "+" : ""}{t.change}%</span>
+        <span className={cn("rounded-full px-2 py-0.5 font-mono text-xs font-semibold", t.change >= 0 ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive")}>{t.change >= 0 ? "▲" : "▼"} {Math.abs(t.change)}%</span>
       </div>
-      <div className="mt-3"><CurveBar value={t.curve} /></div>
-      <div className="mt-3 flex items-center justify-between">
-        <SquadStatus t={t} />
-        <span className="font-mono text-[10px] text-muted-foreground">curve {t.curve}%</span>
+      <div className="mt-3 flex gap-1.5 font-mono text-[10px]">
+        <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">VOL <span className="text-foreground">{fmtUsd(vol)}</span></span>
+        <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">LIQ <span className="text-foreground">{fmtUsd(liq)}</span></span>
       </div>
+      <div className="mt-4 flex items-center justify-between font-mono text-[10px] text-muted-foreground"><span>Bonding curve</span><span className="text-foreground">{t.curve}%</span></div>
+      <div className="mt-1.5"><CurveBar value={t.curve} /></div>
+      <div className="mt-4 border-t pt-3"><SquadStatus t={t} /></div>
     </Link>
   );
 }
@@ -75,7 +78,7 @@ export function Terminal({ tickers, title = "squad feed", rows = 10, only }: { t
     return () => clearInterval(i);
   }, [tickers?.join(","), rows, only]);
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card">
+    <div className="card-premium overflow-hidden rounded-2xl">
       <div className="flex items-center gap-2 border-b px-4 py-2.5 font-mono text-xs text-muted-foreground">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> {title}
       </div>
@@ -95,25 +98,35 @@ export function Terminal({ tickers, title = "squad feed", rows = 10, only }: { t
 export function AgentCard({ m, index }: { m: Minion; index: number }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl border bg-card p-5">
+    <div className="card-premium lift flex flex-col rounded-2xl p-5">
       <div className="flex items-start gap-4">
-        <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border bg-secondary text-2xl">
+        <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-gradient-to-b from-secondary to-card text-2xl ring-1 ring-border">
           {AVATARS[m.id] ? <img src={AVATARS[m.id]} alt={m.name} loading="lazy" className="h-full w-full object-contain p-1" /> : m.emoji}
         </div>
-        <div className="min-w-0">
-          <div className="font-mono text-[10px] text-muted-foreground">AGENT {String(index + 1).padStart(2, "0")}</div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[10px] tracking-widest text-muted-foreground">AGENT {String(index + 1).padStart(2, "0")}</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 font-mono text-[9px] font-semibold text-success"><span className="h-1 w-1 animate-pulse rounded-full bg-success" />ONLINE</span>
+          </div>
           <div className="font-display text-xl font-medium">{m.name}</div>
-          <div className="text-xs text-muted-foreground">{m.role} · {m.title}</div>
+          <div className="text-xs text-muted-foreground">{m.role}</div>
         </div>
       </div>
-      <p className="mt-4 text-sm">{m.bio}</p>
-      <button onClick={() => setOpen(!open)} className="mt-4 text-xs font-semibold underline underline-offset-4">
-        {open ? "Hide live work" : "See live work →"}
+      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {m.abilities.map((a) => <span key={a} className="rounded-full border bg-secondary/60 px-2.5 py-0.5 text-[11px] font-medium">{a}</span>)}
+      </div>
+      <button onClick={() => setOpen(!open)} className="mt-auto pt-4 text-left text-xs font-semibold underline-offset-4 hover:underline">
+        {open ? "Hide action history" : "Action history →"}
       </button>
       {open && (
-        <ul className="mt-3 animate-slidein space-y-1.5 border-t pt-3 font-mono text-xs text-muted-foreground">
-          {m.actions.map((a) => <li key={a}>— {a}</li>)}
-        </ul>
+        <ol className="mt-3 animate-slidein space-y-2 border-t pt-3">
+          {m.actions.map((a, i) => (
+            <li key={a} className="flex items-center gap-2 font-mono text-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-success" /><span className="flex-1">{a}</span><span className="text-muted-foreground">{(i + 1) * 4}m ago</span>
+            </li>
+          ))}
+        </ol>
       )}
     </div>
   );

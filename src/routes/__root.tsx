@@ -78,15 +78,20 @@ const CA = "M1N1oNsQuEsT7aGeNtSpUmPxYz";
 function SidebarBody({ onNav }: { onNav?: () => void }) {
   return (
     <div className="flex h-full flex-col">
-      <Link to="/" onClick={onNav} className="block px-2">
-        <div className="font-display text-2xl font-bold tracking-tight">MINIONS</div>
-        <div className="text-xs text-muted-foreground">The AI memecoin agency</div>
+      <Link to="/" onClick={onNav} className="flex items-center gap-3 px-2">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary font-display text-lg font-bold text-primary-foreground shadow-md">M</span>
+        <span>
+          <span className="flex items-center gap-1.5 font-display text-xl font-bold tracking-tight">MINIONS
+            <span className="rounded-full border border-accent/40 bg-accent/10 px-1.5 py-px font-mono text-[8px] font-semibold tracking-widest text-accent">BETA</span>
+          </span>
+          <span className="block text-[11px] text-muted-foreground">The AI memecoin agency · Solana</span>
+        </span>
       </Link>
       <nav className="mt-10 space-y-1">
         {NAV.map((n) => (
           <Link key={n.to} to={n.to} onClick={onNav} activeOptions={{ exact: n.to === "/" }}
-            className="flex items-center gap-3 rounded-full px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-            activeProps={{ className: "bg-secondary !text-foreground font-semibold" }}>
+            className="relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground"
+            activeProps={{ className: "bg-card shadow-sm ring-1 ring-border !text-foreground font-semibold before:absolute before:-left-4 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-accent" }}>
             <n.icon className="h-4 w-4" strokeWidth={1.75} /> {n.label}
           </Link>
         ))}
@@ -109,7 +114,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen w-full">
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r px-4 py-6 lg:block">
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r bg-card/40 px-4 py-6 backdrop-blur lg:block">
           <SidebarBody />
         </aside>
         {open && (
@@ -127,10 +132,11 @@ function RootComponent() {
             <span className="font-display text-lg font-bold lg:hidden">MINIONS</span>
             <div className="ml-auto flex items-center gap-2">
               <button onClick={() => { navigator.clipboard?.writeText(CA); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-                className="hidden items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs sm:inline-flex">
+                className="hidden items-center gap-2 rounded-full border bg-card px-3 py-1.5 font-mono text-xs shadow-sm transition hover:shadow-md sm:inline-flex">
                 <span className="text-muted-foreground">CA</span> {copied ? "Copied!" : `${CA.slice(0, 4)}…${CA.slice(-4)}`} <Copy className="h-3 w-3" />
               </button>
-              <button className={`${pillDark} !py-1.5 !px-4`}>Connect wallet</button>
+              <span className="hidden items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 font-mono text-[10px] font-semibold shadow-sm md:inline-flex"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />SOLANA</span>
+              <button className={`${pillDark} !py-1.5 !px-4 shadow-md`}>Connect Wallet</button>
             </div>
           </header>
           <main className={isHome ? "w-full flex-1" : "mx-auto w-full max-w-6xl flex-1 px-4 py-10 md:px-8"}><Outlet /></main>

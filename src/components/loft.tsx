@@ -206,7 +206,13 @@ export function AgencyLoft() {
           const active = hover === s.id;
           return (
             <div key={s.id}>
+              <div aria-hidden className="pointer-events-none absolute z-[3]" style={{
+                left: `${s.x}%`, top: `${s.y}%`, width: `${s.w * 1.2}%`, height: `${s.w * 0.18}%`,
+                transform: "translate(-50%, -50%)",
+                background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 24%, transparent), transparent 70%)",
+              }} />
               <button
+
                 onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onClick={() => setOpen(s)}
                 className="absolute z-10 origin-bottom transition-transform hover:scale-105"
                 style={{ left: `${s.x}%`, top: `${s.y}%`, width: `${s.w}%`, transform: "translate(-50%, -100%)" }}

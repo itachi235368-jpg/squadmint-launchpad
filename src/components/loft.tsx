@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
-import bob from "@/assets/agents/cipher.png";
-import kevin from "@/assets/agents/echo.png";
-import stuart from "@/assets/agents/atlas.png";
+import bob from "@/assets/agents/bob.png";
+import kevin from "@/assets/agents/kevin.png";
+import stuart from "@/assets/agents/stuart.png";
 import otto from "@/assets/agents/otto.png";
-import dave from "@/assets/agents/forge.png";
+import dave from "@/assets/agents/dave.png";
 import { Button } from "@/components/ui/button";
 import { MINIONS, TOKENS, fmtUsd, fmtNum, type Minion } from "@/lib/data";
 import { Terminal, pillDark, pillLine } from "@/components/ui-bits";

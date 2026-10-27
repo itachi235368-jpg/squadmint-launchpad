@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MINIONS, TOKENS, isTickerTaken, randomLog, squadActive, type Token } from "@/lib/data";
+import { MINIONS, TOKENS, isTickerTaken, squadActive, type Token } from "@/lib/data";
 import { STATIONS } from "@/components/loft";
 
 describe("launch & squad rules", () => {
@@ -29,17 +29,11 @@ describe("five-minion roster", () => {
     const minion = MINIONS.find((m) => m.id === id);
     expect(minion?.role).toBe(role);
     expect(minion?.actions).toEqual(actions);
-    expect(randomLog(["FROGZ"], id).minion.id).toBe(id);
   });
   it("includes Stuart's 100% graduation, fees and both liquidity destinations", () => {
     const stuart = MINIONS.find((m) => m.id === "stuart");
     expect(stuart?.bio).toContain("100%");
     expect(stuart?.bio).toContain("pays graduation fees");
     expect(stuart?.bio).toContain("Raydium / Meteora");
-  });
-  it("limits the shared feed to the five current minions", () => {
-    for (let i = 0; i < 50; i++) {
-      expect(["bob", "kevin", "stuart", "otto", "dave"]).toContain(randomLog().minion.id);
-    }
   });
 });

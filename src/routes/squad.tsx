@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MINIONS } from "@/lib/data";
-import { AgentCard, PageHead, Terminal } from "@/components/ui-bits";
+import { AgentCard, PageHead } from "@/components/ui-bits";
 
 export const Route = createFileRoute("/squad")({
   head: () => ({
@@ -23,7 +23,6 @@ function Squad() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {MINIONS.map((m, i) => <AgentCard key={m.id} m={m} index={i} />)}
       </div>
-      <Terminal title="mission log · all squads" rows={12} />
     </div>
   );
 }

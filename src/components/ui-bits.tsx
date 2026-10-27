@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { fmtUsd, randomLog, squadActive, type Token, type Minion } from "@/lib/data";
+import { useState } from "react";
+import { fmtUsd, squadActive, type Token, type Minion } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { AVATARS } from "@/lib/avatars";
 
@@ -70,30 +70,6 @@ export function TokenCard({ t }: { t: Token }) {
   );
 }
 
-export function Terminal({ tickers, title = "squad feed", rows = 10, only }: { tickers?: string[]; title?: string; rows?: number; only?: string }) {
-  const [logs, setLogs] = useState<ReturnType<typeof randomLog>[]>([]);
-  useEffect(() => {
-    setLogs(Array.from({ length: 5 }, () => randomLog(tickers, only)));
-    const i = setInterval(() => setLogs((l) => [randomLog(tickers, only), ...l].slice(0, rows)), 2000);
-    return () => clearInterval(i);
-  }, [tickers?.join(","), rows, only]);
-  return (
-    <div className="card-premium overflow-hidden rounded-2xl">
-      <div className="flex items-center gap-2 border-b px-4 py-2.5 font-mono text-xs text-muted-foreground">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> {title}
-      </div>
-      <div className="h-72 space-y-2 overflow-hidden p-4 font-mono text-xs">
-        {logs.map((l) => (
-          <div key={l.id} className="animate-slidein">
-            <span className="text-muted-foreground">{l.time}</span>{" "}
-            <span className="font-semibold">{l.minion.emoji} {l.minion.name}</span>{" "}
-            <span className="text-accent">${l.ticker}</span> <span className="text-muted-foreground">{l.text}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export function AgentCard({ m, index }: { m: Minion; index: number }) {
   const [open, setOpen] = useState(false);

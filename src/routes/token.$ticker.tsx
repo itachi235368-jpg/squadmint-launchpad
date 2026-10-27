@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { TOKENS, MINIONS, fmtUsd, fmtNum, genCandles, type Token } from "@/lib/data";
+import { TOKENS, MINIONS, fmtUsd, fmtNum, genCandles } from "@/lib/data";
 import { CurveBar, PairBadge, SquadStatus } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/token/$ticker")({
           { property: "og:type", content: "website" },
           { name: "twitter:card", content: "summary_large_image" },
           { title: `$${loaderData.ticker} HQ — MINIONS` },
-          { name: "description", content: `${loaderData.name} chart, swap, bonding curve and live AI squad feed.` },
+          { name: "description", content: `${loaderData.name} chart, swap, bonding curve and squad status.` },
           { property: "og:title", content: `$${loaderData.ticker} HQ — MINIONS` },
           { property: "og:description", content: `${loaderData.name} on MINIONS` },
         ]
@@ -76,57 +76,6 @@ function Swap({ ticker }: { ticker: string }) {
   );
 }
 
-const TABS = ["Memes", "Tweets", "Burns", "Lore"] as const;
-
-function AgentOutput({ t }: { t: Token }) {
-  const [tab, setTab] = useState<(typeof TABS)[number]>("Memes");
-  const memes = ["🚀", "💎", "🔥", "👑", "🌕", "😂"];
-  const tweets = [
-    `gm. $${t.ticker} holders don't sleep, they compound. 🧵`,
-    `${t.name} just crossed ${fmtUsd(t.mcap)}. the squad is not tired.`,
-    `if you're reading this you're early to $${t.ticker}. that's the tweet.`,
-  ];
-  return (
-    <div className="rounded-2xl border bg-card">
-      <div className="flex gap-1 border-b p-2">
-        {TABS.map((x) => (
-          <button key={x} onClick={() => setTab(x)} className={cn("rounded-full px-4 py-1.5 text-sm", tab === x ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{x}</button>
-        ))}
-      </div>
-      <div key={tab} className="animate-slidein p-5">
-        {tab === "Memes" && (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-            {memes.map((e, i) => <div key={i} className="grid aspect-square place-items-center rounded-xl border bg-secondary text-3xl">{t.emoji}{e}</div>)}
-            <p className="col-span-full text-xs text-muted-foreground">📣 Kevin · profile & raid visuals · {t.style} style · new batch every 15 min</p>
-          </div>
-        )}
-        {tab === "Tweets" && (
-          <ul className="space-y-3">
-            {tweets.map((x, i) => <li key={i} className="rounded-xl border p-4 text-sm"><div className="mb-1 text-xs text-muted-foreground">📣 Kevin · official X account & scheduled posts · {(i + 1) * 15}m ago</div>{x}</li>)}
-          </ul>
-        )}
-        {tab === "Burns" && (
-          <div>
-            {[0.42, 0.31, 0.27].map((p, i) => (
-              <div key={i} className="flex justify-between border-b py-3 font-mono text-xs last:border-0">
-                <span>🔥 {fmtNum(Math.round(t.burned * p))} ${t.ticker} burned</span>
-                <span className="text-muted-foreground">tx 4f{t.ticker.slice(0, 2).toLowerCase()}…{i}a9</span>
-              </div>
-            ))}
-            <p className="mt-3 text-xs text-muted-foreground">Total burned by Otto: {fmtNum(t.burned)}</p>
-          </div>
-        )}
-        {tab === "Lore" && (
-          <div className="max-w-prose font-display text-lg leading-relaxed">
-            <p>Chapter {Math.ceil(t.level / 3)} — In the age of endless charts, {t.name} rose from the mempool, {t.emoji} in hand, sworn to never sell the bottom.</p>
-            <p className="mt-3 font-sans text-xs text-muted-foreground">🛰️ Bob · narrative research updated with every milestone</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function TokenHQ() {
   const t = Route.useLoaderData();
   return (
@@ -144,10 +93,6 @@ function TokenHQ() {
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">
           <Chart seed={t.ticker.length * 7 + t.level} />
-          <div>
-            <h2 className="mb-3 font-display text-2xl font-medium">Live agent output</h2>
-            <AgentOutput t={t} />
-          </div>
         </div>
         <div className="space-y-6">
           <Swap ticker={t.ticker} />

@@ -5,6 +5,7 @@ import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
+import { parseDevBuy } from "@/lib/launch-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
 const getPhantom = () => (window as unknown as { solana?: Phantom & { isPhantom?: boolean } }).solana;
@@ -100,7 +101,7 @@ function Launch() {
   }
   const taken = ticker.length > 0 && isTickerTaken(ticker);
 
-  const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${x * 300},${150 - x * x * 140}`; }).join(" ");
+  const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${6 + x * 288},${150 - x * x * 140}`; }).join(" ");
   const devX = Math.min(dev / 10, 1);
 
   return (
@@ -129,9 +130,10 @@ function Launch() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setFile(f); setImg(URL.createObjectURL(f)); } }} />
             </label>
             <textarea className={cn(field, "mt-3")} rows={2} maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description (optional)" />
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {([["twitter", "X / Twitter link"], ["telegram", "Telegram link"], ["website", "Website link"]] as const).map(([k, ph]) => (
-                <input key={k} type="url" className={field} value={links[k]} placeholder={`${ph} (optional)`}
+            <p className="mt-3 text-xs text-muted-foreground">Links (optional)</p>
+            <div className="mt-1.5 grid gap-3 sm:grid-cols-3">
+              {([["twitter", "X link"], ["telegram", "Telegram"], ["website", "Website"]] as const).map(([k, ph]) => (
+                <input key={k} type="url" className={field} value={links[k]} placeholder={ph}
                   onChange={(e) => setLinks((l) => ({ ...l, [k]: e.target.value }))} />
               ))}
             </div>
@@ -154,14 +156,14 @@ function Launch() {
           <Step n={4} title="Dev buy">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Optional</span><span className="font-mono">{dev} {pair}</span></div>
             <div className="relative mt-2">
-              <input type="number" inputMode="decimal" min={0} max={10} step="any" value={dev} placeholder="0"
-                onChange={(e) => setDev(Math.min(10, Math.max(0, Number(e.target.value) || 0)))} className={cn(field, "pr-16 font-mono")} />
+              <input type="number" inputMode="decimal" min={0} step="any" value={dev} placeholder="0"
+                onChange={(e) => setDev(parseDevBuy(e.target.value))} className={cn(field, "pr-16 font-mono")} />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">SOL</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">Type any amount from 0 to 10 SOL.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Any amount you like — you only pay what you can cover.</p>
             <svg viewBox="0 0 300 160" className="mt-4 w-full rounded-xl border bg-card p-2">
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
-              <circle cx={devX * 300} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
+              <circle cx={6 + devX * 288} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
             </svg>
             <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · graduates at 100%</p>
           </Step>

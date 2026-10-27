@@ -3,6 +3,13 @@ import { useState, type ReactNode } from "react";
 import { MINIONS, isTickerTaken } from "@/lib/data";
 import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
+import { useServerFn } from "@tanstack/react-start";
+import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
+
+type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
+const getPhantom = () => (window as unknown as { solana?: Phantom & { isPhantom?: boolean } }).solana;
+const b64ToBytes = (b: string) => Uint8Array.from(atob(b), (c) => c.charCodeAt(0));
+const bytesToB64 = (u: Uint8Array) => { let s = ""; u.forEach((x) => (s += String.fromCharCode(x))); return btoa(s); };
 
 export const Route = createFileRoute("/launch")({
   head: () => ({
@@ -19,7 +26,7 @@ export const Route = createFileRoute("/launch")({
 });
 
 const STYLES = ["Pixel Art", "Cartoon", "Anime", "3D Render", "Editorial", "Doodle"];
-const PAIRS = ["SOL", "USDC", "USD1"];
+const PAIRS = ["SOL"];
 const field = "w-full rounded-xl border bg-background px-4 py-2.5 outline-none focus:border-foreground/50";
 
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
@@ -41,7 +48,54 @@ function Launch() {
   const [style, setStyle] = useState("Pixel Art");
   const [pair, setPair] = useState("SOL");
   const [dev, setDev] = useState(0.5);
-  const [done, setDone] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [desc, setDesc] = useState("");
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ mint: string; signature: string; confirmed: boolean } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const upload = useServerFn(uploadMetadata);
+  const build = useServerFn(buildCreateTx);
+  const send = useServerFn(sendSignedTx);
+
+  async function connect() {
+    const p = getPhantom();
+    if (!p) { setError("No Solana wallet found. Install Phantom (or another Solana wallet) and refresh."); return null; }
+    const r = await p.connect();
+    const pk = r.publicKey.toString();
+    setWallet(pk);
+    return pk;
+  }
+
+  async function launch() {
+    setError(null); setResult(null);
+    if (!file) { setError("Please upload a mascot image."); return; }
+    setBusy(true);
+    try {
+      const pk = wallet ?? (await connect());
+      if (!pk) return;
+      setStatus("Uploading image and details…");
+      const fd = new FormData();
+      fd.append("image", file); fd.append("name", name); fd.append("symbol", ticker); fd.append("description", desc);
+      const { uri } = await upload({ data: fd });
+      setStatus("Preparing launch…");
+      const { Keypair, VersionedTransaction } = await import("@solana/web3.js");
+      const mint = Keypair.generate();
+      const { tx } = await build({ data: { publicKey: pk, mint: mint.publicKey.toBase58(), name, symbol: ticker, uri, devBuySol: dev } });
+      const vtx = VersionedTransaction.deserialize(b64ToBytes(tx));
+      vtx.sign([mint]);
+      setStatus("Approve the launch in your wallet…");
+      const signed = await getPhantom()!.signTransaction(vtx);
+      setStatus("Sending to Solana…");
+      const r = await send({ data: { tx: bytesToB64(signed.serialize()) } });
+      setResult({ mint: mint.publicKey.toBase58(), ...r });
+      setStatus(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Launch failed");
+      setStatus(null);
+    } finally { setBusy(false); }
+  }
   const taken = ticker.length > 0 && isTickerTaken(ticker);
 
   const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${x * 300},${150 - x * x * 140}`; }).join(" ");
@@ -51,7 +105,7 @@ function Launch() {
     <div>
       <PageHead kicker="Launch" title="Launch a coin" sub="Four steps. Your squad of 5 minions starts working the moment it's live." />
       <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
-        <form onSubmit={(e) => { e.preventDefault(); if (!taken) setDone(true); }}>
+        <form onSubmit={(e) => { e.preventDefault(); if (!taken && !busy) void launch(); }}>
           <Step n={1} title="Name & ticker">
             <div className="grid gap-3 sm:grid-cols-2">
               <input required className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Coin name" />
@@ -70,8 +124,9 @@ function Launch() {
                 {img ? <img src={img} alt="Mascot preview" className="h-full w-full object-cover" /> : "＋"}
               </span>
               <span><span className="font-semibold">Upload mascot</span><span className="block text-xs text-muted-foreground">PNG or JPG, square works best</span></span>
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) setImg(URL.createObjectURL(f)); }} />
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setFile(f); setImg(URL.createObjectURL(f)); } }} />
             </label>
+            <textarea className={cn(field, "mt-3")} rows={2} maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description (optional)" />
           </Step>
           <Step n={2} title="Pair">
             <div className="flex flex-wrap gap-2">
@@ -98,11 +153,21 @@ function Launch() {
             <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · graduates at 100%</p>
           </Step>
           <div className="pt-8">
-            <button disabled={taken} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>Launch coin & deploy squad</button>
-            {done && (
-              <p className="mt-4 animate-slidein rounded-xl border border-success p-4 text-sm text-success">
-                Demo launch queued for ${ticker}. Squad assembling: {MINIONS.map((m) => m.name).join(", ")}.
-              </p>
+            <button type="button" onClick={() => void connect()} className="mb-3 w-full rounded-full border py-3 text-sm font-semibold">
+              {wallet ? `Wallet connected · ${wallet.slice(0, 4)}…${wallet.slice(-4)}` : "Connect wallet"}
+            </button>
+            <button disabled={taken || busy} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>{busy ? status ?? "Working…" : "Launch coin & deploy squad"}</button>
+            <p className="mt-3 text-xs text-muted-foreground">Launches on Pump.fun from your wallet. You pay the network fee plus your dev buy.</p>
+            {error && <p className="mt-4 rounded-xl border border-destructive p-4 text-sm text-destructive">{error}</p>}
+            {result && (
+              <div className="mt-4 animate-slidein rounded-xl border border-success p-4 text-sm">
+                <p className="text-success">${ticker} {result.confirmed ? "is live" : "was sent (still confirming)"}. Squad assembling: {MINIONS.map((m) => m.name).join(", ")}.</p>
+                <p className="mt-2 break-all font-mono text-xs">Coin address: {result.mint}</p>
+                <div className="mt-2 flex gap-4 text-xs underline">
+                  <a href={`https://pump.fun/coin/${result.mint}`} target="_blank" rel="noreferrer">View on Pump.fun</a>
+                  <a href={`https://solscan.io/tx/${result.signature}`} target="_blank" rel="noreferrer">View transaction</a>
+                </div>
+              </div>
             )}
           </div>
         </form>

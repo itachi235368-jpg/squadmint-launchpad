@@ -12,26 +12,26 @@ import { Terminal, pillDark, pillLine } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
 type Station = {
-  id: string; img: string; zone: string; tags: string[];
+  id: string; status: string; img: string; zone: string; tags: string[];
   x: number; y: number; w: number; bx: number; by: number; flip?: boolean;
   job: string; work: string[];
 };
 
 // x/y = feet anchor (% of scene), w = width %, bx/by = badge position %
 export const STATIONS: Station[] = [
-  { id: "bob", img: bob, zone: "NARRATIVE & RESEARCH", tags: ["X trends", "Meme metas", "Keywords", "Sentiment"], x: 20, y: 92, w: 11, bx: 12, by: 67,
+  { id: "bob", status: "MONITORING", img: bob, zone: "NARRATIVE & RESEARCH", tags: ["X trends", "Meme metas", "Keywords", "Sentiment"], x: 20, y: 92, w: 11, bx: 12, by: 67,
     job: "Scraping X trends and meme metas for viral angles and coin keywords",
     work: ["scrapes X narratives · 'frog season' +340%", "tracks competitor tickers · 3 losing volume", "detects sentiment surges · keyword spike: 'zeus'"] },
-  { id: "kevin", img: kevin, zone: "X ACCOUNT & SOCIALS", tags: ["Official account", "Banners", "Launch thread", "Raids"], x: 49, y: 94, w: 10, bx: 41, by: 69,
+  { id: "kevin", status: "POSTING", img: kevin, zone: "X ACCOUNT & SOCIALS", tags: ["Official account", "Banners", "Launch thread", "Raids"], x: 49, y: 94, w: 10, bx: 41, by: 69,
     job: "Creating and configuring @frogz with profile banners, raid tweets and automated post schedules",
     work: ["created @coin official account · @frogz", "queued launch thread · 6 posts scheduled", "initiated viral raid · 8 trending posts"] },
-  { id: "stuart", img: stuart, zone: "CURVE & DEX LIQUIDITY", tags: ["100% curve", "Graduation fees", "Raydium / Meteora", "LP burn"], x: 78, y: 92, w: 10, bx: 70, by: 67,
+  { id: "stuart", status: "READY", img: stuart, zone: "CURVE & DEX LIQUIDITY", tags: ["100% curve", "Graduation fees", "Raydium / Meteora", "LP burn"], x: 78, y: 92, w: 10, bx: 70, by: 67,
     job: "Tracking the curve towards 100%, paying graduation fees and seeding Raydium / Meteora liquidity",
     work: ["monitored curve to 100% · graduation sample", "triggered DEX graduation · fees paid", "deposited liquidity & burnt LP · Raydium / Meteora"] },
-  { id: "otto", img: otto, zone: "BUYBACK & BURN", tags: ["Trading fees", "Market buybacks", "On-chain burns", "Tx proof"], x: 87, y: 45, w: 9, bx: 79, by: 24,
+  { id: "otto", status: "BURNING", img: otto, zone: "BUYBACK & BURN", tags: ["Trading fees", "Market buybacks", "On-chain burns", "Tx proof"], x: 87, y: 45, w: 9, bx: 79, by: 24,
     job: "Collecting platform trading fees, executing market buybacks and recording on-chain burn proof",
     work: ["automated buyback executed · 0.8 SOL", "burned supply tokens · 1.2M $FROGZ", "updated live burn proof · sample tx 4fz…a9"] },
-  { id: "dave", img: dave, zone: "WEB & OPERATIONS HQ", tags: ["Live website", "Holder terminal", "DEX charts", "CDN assets"], x: 49, y: 46, w: 9, bx: 41, by: 25,
+  { id: "dave", status: "STANDBY", img: dave, zone: "WEB & OPERATIONS HQ", tags: ["Live website", "Holder terminal", "DEX charts", "CDN assets"], x: 49, y: 46, w: 9, bx: 41, by: 25,
     job: "Building, hosting and deploying /frogz, its holder terminal and live operations portal",
     work: ["deployed live website · minions.quest/frogz", "connected live DEX chart · holder terminal online", "optimized CDN assets · load time 0.8s"] },
 ];
@@ -42,29 +42,43 @@ const byId = (id: string) => {
   return m;
 };
 
+function Spark({ seed, up }: { seed: number; up: boolean }) {
+  const pts = Array.from({ length: 14 }, (_, i) => {
+    const y = 10 - (Math.sin(i * 0.9 + seed) * 3 + (up ? i * 0.35 : -i * 0.25) + 3);
+    return `${i * 4},${Math.max(1, Math.min(13, y))}`;
+  }).join(" ");
+  return <svg viewBox="0 0 52 14" className="h-3.5 w-12"><polyline points={pts} fill="none" strokeWidth="1.25" className={up ? "stroke-success" : "stroke-destructive"} /></svg>;
+}
+
 function LiveCoinsBoard({ className }: { className?: string }) {
   const top = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 4);
   const [tick, setTick] = useState(0);
   useEffect(() => { const i = setInterval(() => setTick((t) => t + 1), 2500); return () => clearInterval(i); }, []);
   return (
-    <div className={cn("rounded-xl border border-primary-foreground/10 bg-primary/95 p-3 font-mono text-primary-foreground shadow-2xl", className)}>
-      <div className="flex items-center justify-between">
-        <div className="text-[11px] font-semibold tracking-widest">LIVE COINS</div>
-        <div className="flex items-center gap-1 text-[9px] text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />LIVE</div>
+    <div className={cn("overflow-hidden rounded-2xl border border-primary-foreground/10 bg-primary font-mono text-primary-foreground shadow-[0_30px_60px_-30px_oklch(0_0_0/0.5)]", className)}>
+      <div className="flex items-center justify-between border-b border-primary-foreground/10 px-3 py-2">
+        <div className="text-[10px] font-semibold tracking-[0.2em]">LIVE COINS</div>
+        <div className="flex items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 text-[8px] text-success"><span className="h-1 w-1 animate-pulse rounded-full bg-success" />LIVE</div>
       </div>
-      <div className="text-[8px] tracking-widest opacity-50">TOP 4 · BY MARKET CAP</div>
-      <div className="mt-2 space-y-1.5">
+      <div className="px-3 pt-1.5 text-[8px] tracking-widest opacity-40">TOP 4 · BY MARKET CAP</div>
+      <div className="space-y-0.5 p-1.5">
         {top.map((t, i) => {
           const ch = +(t.change + Math.sin(tick + i) * 1.5).toFixed(1);
+          const up = ch >= 0;
           return (
-            <Link key={t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="flex items-center gap-2 rounded-md p-1 hover:bg-primary-foreground/10">
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-foreground/10 text-xs">{t.emoji}</span>
-              <span className="min-w-0 flex-1 leading-tight">
-                <span className="block text-[10px] font-semibold">${t.ticker}</span>
-                <span className="block text-[9px] opacity-60">{fmtUsd(t.mcap)} · ${(t.mcap / 1e9).toFixed(6)}</span>
-                <span className="mt-0.5 block h-0.5 rounded bg-primary-foreground/15"><span className="block h-full rounded bg-accent" style={{ width: `${t.curve}%` }} /></span>
-              </span>
-              <span className={cn("text-[9px]", ch >= 0 ? "text-success" : "text-destructive")}>{ch >= 0 ? "+" : ""}{ch}%</span>
+            <Link key={t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="block rounded-lg px-1.5 py-1.5 transition hover:bg-primary-foreground/5">
+              <div key={tick} className="flex items-center gap-2 rounded animate-flash">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-foreground/10 text-xs">{t.emoji}</span>
+                <span className="min-w-0 flex-1 leading-tight">
+                  <span className="block text-[10px] font-semibold">${t.ticker}</span>
+                  <span className="block text-[9px] opacity-50">{fmtUsd(t.mcap)}</span>
+                </span>
+                <span className="text-right leading-tight">
+                  <Spark seed={i + tick * 0.3} up={up} />
+                  <span className={cn("block text-[9px]", up ? "text-success" : "text-destructive")}>{up ? "▲" : "▼"} {Math.abs(ch)}%</span>
+                </span>
+              </div>
+              <span className="mt-1 block h-[3px] overflow-hidden rounded-full bg-primary-foreground/10"><span className="block h-full rounded-full bg-gradient-to-r from-accent/60 to-accent" style={{ width: `${t.curve}%` }} /></span>
             </Link>
           );
         })}
@@ -110,17 +124,31 @@ function BurnWidget() {
   const [burned, setBurned] = useState(3_204_118_220);
   useEffect(() => { const i = setInterval(() => setBurned((b) => b + Math.floor(Math.random() * 9000)), 1500); return () => clearInterval(i); }, []);
   return (
-    <div className="fixed bottom-4 right-4 z-30 hidden w-72 items-center gap-3 rounded-2xl bg-primary p-3 text-primary-foreground shadow-2xl md:flex">
-      <div className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-accent/30">
-        <Flame className="h-8 w-8 animate-pulse text-accent" />
+    <div className="glass fixed bottom-5 right-5 z-30 hidden w-80 items-center gap-3 rounded-full py-2 pl-2 pr-3 md:flex" style={{ boxShadow: "var(--glow-accent), 0 12px 32px -18px oklch(0 0 0 / .25)" }}>
+      <div className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent/30 to-accent/5 ring-1 ring-accent/30">
+        <Flame className="h-5 w-5 animate-pulse text-accent" />
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="font-display text-lg leading-tight">Bought back. Burned.</div>
-        <div className="font-mono text-[10px] opacity-70">{fmtNum(burned)} tokens · live</div>
+      <div className="min-w-0 flex-1 leading-tight">
+        <div className="font-display text-sm font-semibold">Bought back. Burned.</div>
+        <div className="font-mono text-[10px] text-muted-foreground">{fmtNum(burned)} tokens</div>
+        <a href="https://solscan.io/tx/4fzQ8sampleTxA9" target="_blank" rel="noreferrer" className="font-mono text-[10px] text-accent underline-offset-2 hover:underline">tx 4fzQ…A9 ↗ (sample)</a>
       </div>
-      <button aria-label={sound ? "Mute" : "Unmute"} onClick={() => setSound(!sound)} className="rounded-full border border-primary-foreground/20 p-2">
-        {sound ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+      <button aria-label={sound ? "Mute" : "Unmute"} aria-pressed={sound} onClick={() => setSound(!sound)}
+        className={cn("relative h-6 w-11 shrink-0 rounded-full border transition", sound ? "bg-accent" : "bg-muted")}>
+        <span className={cn("absolute top-0.5 grid h-4.5 w-4.5 place-items-center rounded-full bg-card shadow-sm transition-all", sound ? "left-[22px]" : "left-0.5")} style={{ width: 18, height: 18 }}>
+          {sound ? <Volume2 className="h-2.5 w-2.5" /> : <VolumeX className="h-2.5 w-2.5" />}
+        </span>
       </button>
+    </div>
+  );
+}
+
+function StatusTicker() {
+  const items = ["AI SQUAD V2 ONLINE", "5 AUTONOMOUS MINIONS DEPLOYED", "SOLANA DEVNET / MAINNET READY", "MEMES EVERY 15 MIN", "BUYBACK & BURN ACTIVE", "SQUADS RAID AT $10K"];
+  const row = items.map((t) => <span key={t} className="flex items-center gap-3 px-6"><span className="h-1 w-1 rounded-full bg-success" />{t}</span>);
+  return (
+    <div className="relative z-20 overflow-hidden border-b bg-primary py-2 font-mono text-[10px] tracking-[0.2em] text-primary-foreground/80">
+      <div className="flex w-max animate-marquee">{row}{row}</div>
     </div>
   );
 }
@@ -175,6 +203,7 @@ export function AgencyLoft() {
   const [open, setOpen] = useState<Station | null>(null);
   return (
     <>
+      <StatusTicker />
       {/* Desktop scene */}
       <section className="relative hidden min-h-[720px] w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
         <SceneBackdrop />
@@ -188,16 +217,21 @@ export function AgencyLoft() {
           const active = hover === s.id;
           return (
             <div key={s.id}>
-              <div aria-hidden className="pointer-events-none absolute z-[3]" style={{
-                left: `${s.x}%`, top: `${s.y}%`, width: `${s.w * 1.2}%`, height: `${s.w * 0.18}%`,
+              <div aria-hidden className="pointer-events-none absolute z-[3] rounded-[50%] border border-foreground/10 transition duration-300" style={{
+                left: `${s.x}%`, top: `${s.y}%`, width: `${s.w * 1.35}%`, aspectRatio: "4 / 1",
                 transform: "translate(-50%, -50%)",
-                background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 24%, transparent), transparent 70%)",
+                background: "radial-gradient(ellipse at 50% 35%, color-mix(in oklab, var(--card) 95%, transparent), color-mix(in oklab, var(--secondary) 80%, transparent) 70%)",
+                boxShadow: active ? "0 0 0 1px color-mix(in oklab, var(--accent) 50%, transparent), 0 0 40px 6px color-mix(in oklab, var(--accent) 35%, transparent), 0 14px 24px -10px oklch(0 0 0 / .3)" : "inset 0 1px 0 var(--card), 0 14px 24px -12px oklch(0 0 0 / .25)",
+              }} />
+              <div aria-hidden className="pointer-events-none absolute z-[2] animate-ring rounded-[50%]" style={{
+                left: `${s.x}%`, top: `${s.y + 0.6}%`, width: `${s.w * 1.7}%`, aspectRatio: "4 / 1", transform: "translate(-50%, -50%)",
+                background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--accent) 28%, transparent), transparent 70%)",
               }} />
               <button
 
                 onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onClick={() => setOpen(s)}
-                className="absolute z-10 origin-bottom transition-transform hover:scale-105"
-                style={{ left: `${s.x}%`, top: `${s.y}%`, width: `${s.w}%`, transform: "translate(-50%, -100%)" }}
+                className="absolute z-10 origin-bottom transition-transform duration-300"
+                style={{ left: `${s.x}%`, top: `${s.y - (active ? 1.2 : 0.4)}%`, width: `${s.w}%`, transform: "translate(-50%, -100%)" }}
                 aria-label={`Open ${m.name}`}>
                 <img src={s.img} alt={m.name} className="w-full animate-floaty transition-[filter]"
                   style={{ animationDelay: `${i * 0.4}s`, animationDuration: `${2.6 + (i % 3) * 0.5}s`,
@@ -207,9 +241,10 @@ export function AgencyLoft() {
                 </span>
               </button>
               <button onClick={() => setOpen(s)} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)}
-                className={cn("absolute z-[5] max-w-[16%] -translate-y-full rounded-lg border bg-background/85 px-2.5 py-1.5 text-left backdrop-blur transition", active && "border-accent glow-accent")}
+                className={cn("glass absolute z-[5] max-w-[16%] -translate-y-full rounded-xl px-3 py-2 text-left transition duration-300", active && "-translate-y-[calc(100%+4px)] border-accent/50 glow-accent")}
                 style={{ left: `${s.bx}%`, top: `${s.by}%` }}>
-               <div className="font-display text-xs font-bold leading-snug">{s.zone}</div>
+               <div className="mb-1 flex items-center gap-1.5 font-mono text-[8px] font-semibold tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />{s.status}</div>
+                <div className="font-display text-xs font-bold leading-snug">{s.zone}</div>
                 <div className="mt-1 font-mono text-[8px] uppercase leading-snug text-muted-foreground">{s.tags.join(" • ")}</div>
               </button>
             </div>
@@ -229,9 +264,10 @@ export function AgencyLoft() {
           {STATIONS.map((s) => {
             const m = byId(s.id);
             return (
-              <Button variant="ghost" key={s.id} aria-label={`Open ${m.name}`} onClick={() => setOpen(s)} className="h-auto justify-start whitespace-normal gap-3 rounded-2xl border bg-card p-3 text-left">
+              <Button variant="ghost" key={s.id} aria-label={`Open ${m.name}`} onClick={() => setOpen(s)} className="card-premium lift h-auto justify-start whitespace-normal gap-3 rounded-2xl p-3 text-left">
                 <img src={s.img} alt={m.name} loading="lazy" className="h-16 w-16 shrink-0 animate-floaty object-contain" />
                 <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />{s.status}</div>
                   <div className="font-mono text-[10px] tracking-widest text-muted-foreground">{s.zone}</div>
                   <div className="font-display text-lg font-medium">{m.name}</div>
                   <div className="text-xs text-muted-foreground">{m.role}</div>

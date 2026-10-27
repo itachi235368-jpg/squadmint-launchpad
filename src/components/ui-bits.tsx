@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { fmtUsd, randomLog, squadActive, type Token, type Minion } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { AVATARS } from "@/lib/avatars";
 
 export const pill = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition";
 export const pillDark = cn(pill, "bg-primary text-primary-foreground hover:opacity-90");
@@ -96,7 +97,9 @@ export function AgentCard({ m, index }: { m: Minion; index: number }) {
   return (
     <div className="rounded-2xl border bg-card p-5">
       <div className="flex items-start gap-4">
-        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border bg-secondary text-2xl">{m.emoji}</div>
+        <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border bg-secondary text-2xl">
+          {AVATARS[m.id] ? <img src={AVATARS[m.id]} alt={m.name} loading="lazy" className="h-full w-full object-contain p-1" /> : m.emoji}
+        </div>
         <div className="min-w-0">
           <div className="font-mono text-[10px] text-muted-foreground">AGENT {String(index + 1).padStart(2, "0")}</div>
           <div className="font-display text-xl font-medium">{m.name}</div>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MINIONS, TOKENS } from "@/lib/data";
-import { AgentCard, TokenCard, Terminal, pillDark } from "@/components/ui-bits";
+import { AgentCard, TokenCard, pillDark } from "@/components/ui-bits";
 import { AgencyLoft } from "@/components/loft";
 
 export const Route = createFileRoute("/")({
@@ -51,11 +51,6 @@ function Index() {
             <Link to="/launch" className={`${pillDark} mt-6 self-start`}>Hire your squad</Link>
           </div>
         </div>
-      </section>
-
-      <section>
-        <h2 className="mb-6 font-display text-3xl font-medium tracking-tight">Live from the squads</h2>
-        <Terminal />
       </section>
       </div>
     </div>

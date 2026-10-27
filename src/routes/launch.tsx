@@ -5,6 +5,7 @@ import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
+import { parseDevBuy } from "@/lib/launch-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
 const getPhantom = () => (window as unknown as { solana?: Phantom & { isPhantom?: boolean } }).solana;

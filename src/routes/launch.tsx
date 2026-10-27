@@ -4,7 +4,7 @@ import { MINIONS, isTickerTaken } from "@/lib/data";
 import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
-import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
+import { uploadMetadata, buildCreateTx, sendSignedTx, saveLaunchCoin } from "@/lib/launch.functions";
 import { parseDevBuy, curveFill, CURVE_GRADUATION_SOL } from "@/lib/launch-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
@@ -56,10 +56,12 @@ function Launch() {
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ mint: string; signature: string; confirmed: boolean } | null>(null);
+  const [savedNote, setSavedNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const upload = useServerFn(uploadMetadata);
   const build = useServerFn(buildCreateTx);
   const send = useServerFn(sendSignedTx);
+  const save = useServerFn(saveLaunchCoin);
 
   async function connect() {
     const p = getPhantom();

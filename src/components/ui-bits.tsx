@@ -70,7 +70,7 @@ export function Terminal({ tickers, title = "squad feed", rows = 10, only }: { t
   const [logs, setLogs] = useState<ReturnType<typeof randomLog>[]>([]);
   useEffect(() => {
     setLogs(Array.from({ length: 5 }, () => randomLog(tickers, only)));
-    const i = setInterval(() => setLogs((l) => [randomLog(tickers), ...l].slice(0, rows)), 2000);
+    const i = setInterval(() => setLogs((l) => [randomLog(tickers, only), ...l].slice(0, rows)), 2000);
     return () => clearInterval(i);
   }, [tickers?.join(","), rows, only]);
   return (

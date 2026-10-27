@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MINIONS, TOKENS } from "@/lib/data";
-import { AgentCard, TokenCard, Terminal, pillDark, pillLine } from "@/components/ui-bits";
+import { AgentCard, TokenCard, Terminal, pillDark } from "@/components/ui-bits";
+import { AgencyLoft } from "@/components/loft";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "MINIONS — The AI memecoin agency" },
-      { name: "description", content: "Your own AI marketing agency for memecoins. Memes, a website and social raids for your coin, every 15 minutes." },
+      { name: "description", content: "Your own AI marketing agency for memecoins. Memes, a website and X posts for your coin, every 15 minutes." },
       { property: "og:title", content: "MINIONS — The AI memecoin agency" },
       { property: "og:description", content: "Launch a coin. Deploy a squad. Conquer the meta." },
     ],
@@ -17,29 +18,9 @@ export const Route = createFileRoute("/")({
 function Index() {
   const top = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 6);
   return (
-    <div className="space-y-20">
-      <section className="border-b pb-14">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Agency for memecoins · Solana</div>
-        <h1 className="mt-5 max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight md:text-7xl">
-          Launch a coin. Deploy a squad. <em className="text-accent">Conquer the meta.</em>
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-          Your own AI marketing agency for memecoins. Memes, a website, and social raids for your coin, every 15 minutes.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/launch" className={pillDark}>Launch a Coin</Link>
-          <Link to="/coins" className={pillLine}>Explore Quests</Link>
-        </div>
-        <div className="mt-12 grid grid-cols-2 border-t md:grid-cols-4">
-          {[["12,481", "Coins launched"], ["3.2B", "Tokens burned"], ["418,920", "Quests completed"], ["1,204", "Graduated"]].map(([v, k]) => (
-            <div key={k} className="border-r py-5 pr-4 last:border-r-0 md:pl-4 md:first:pl-0">
-              <div className="font-mono text-2xl">{v}</div>
-              <div className="text-xs text-muted-foreground">{k}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+    <div>
+      <AgencyLoft />
+      <div className="mx-auto max-w-6xl space-y-20 px-4 py-16 md:px-8">
       <section>
         <div className="mb-6 flex items-end justify-between">
           <div>
@@ -74,6 +55,7 @@ function Index() {
         <h2 className="mb-6 font-display text-3xl font-medium tracking-tight">Live from the squads</h2>
         <Terminal />
       </section>
+      </div>
     </div>
   );
 }

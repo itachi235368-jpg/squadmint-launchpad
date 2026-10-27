@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
-import loft from "@/assets/loft.jpg";
 import atlas from "@/assets/agents/atlas.png";
 import cipher from "@/assets/agents/cipher.png";
 import nova from "@/assets/agents/nova.png";
@@ -161,15 +160,43 @@ function HeroCopy() {
   );
 }
 
+// Subtle themed backdrop (no photo): soft ivory gradient, faint dot grid, hairline floor planes.
+function SceneBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0" style={{
+        background:
+          "radial-gradient(120% 90% at 82% 6%, color-mix(in oklab, var(--accent) 9%, transparent), transparent 55%)," +
+          "radial-gradient(90% 80% at 6% 96%, color-mix(in oklab, var(--primary) 6%, transparent), transparent 60%)," +
+          "linear-gradient(180deg, color-mix(in oklab, var(--secondary) 70%, var(--background)) 0%, var(--background) 60%)",
+      }} />
+      <div className="absolute inset-0" style={{
+        backgroundImage: "radial-gradient(color-mix(in oklab, var(--primary) 14%, transparent) 1px, transparent 1px)",
+        backgroundSize: "26px 26px",
+        opacity: 0.5,
+        maskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
+        WebkitMaskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
+      }} />
+      <div className="absolute inset-x-0" style={{ top: "37%" }}>
+        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, color-mix(in oklab, var(--primary) 16%, transparent) 18%, color-mix(in oklab, var(--primary) 16%, transparent) 82%, transparent)" }} />
+        <div className="h-12" style={{ background: "linear-gradient(180deg, color-mix(in oklab, var(--primary) 4%, transparent), transparent)" }} />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-[14%]" style={{ background: "linear-gradient(180deg, transparent, color-mix(in oklab, var(--secondary) 80%, var(--background)))" }} />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(60% 55% at 12% 20%, color-mix(in oklab, var(--background) 92%, transparent) 0%, transparent 62%)" }} />
+    </div>
+  );
+}
+
 export function AgencyLoft() {
+
   const [hover, setHover] = useState<string | null>(null);
   const [open, setOpen] = useState<Station | null>(null);
   return (
     <>
       {/* Desktop scene */}
       <section className="relative hidden w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
-        <img src={loft} alt="Two-story agency loft office" width={1920} height={1024} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(100deg,var(--background)_0%,color-mix(in_oklab,var(--background)_70%,transparent)_22%,transparent_42%)]" />
+        <SceneBackdrop />
+
         <div className="absolute left-[3%] top-[6%] z-20 max-w-[34%]"><HeroCopy /></div>
 
         <LiveCoinsBoard className="absolute left-[48%] top-[10%] z-10 w-[10%] min-w-[150px]" />
@@ -204,9 +231,12 @@ export function AgencyLoft() {
 
       {/* Mobile stack */}
       <section className="space-y-6 px-4 py-8 lg:hidden">
-        <HeroCopy />
-        <img src={loft} alt="Agency loft office" width={1920} height={1024} className="w-full rounded-2xl border" />
+        <div className="relative overflow-hidden rounded-3xl border bg-background px-5 py-8">
+          <SceneBackdrop />
+          <div className="relative z-10"><HeroCopy /></div>
+        </div>
         <LiveCoinsBoard />
+
         <div className="grid gap-3 sm:grid-cols-2">
           {STATIONS.map((s) => {
             const m = byId(s.id);

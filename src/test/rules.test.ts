@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MINIONS, TOKENS, isTickerTaken, randomLog, squadActive } from "@/lib/data";
+import { MINIONS, TOKENS, isTickerTaken, randomLog, squadActive, type Token } from "@/lib/data";
 import { STATIONS } from "@/components/loft";
 
 describe("launch & squad rules", () => {

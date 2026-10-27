@@ -4,34 +4,26 @@ export type Minion = {
 };
 
 export const MINIONS: Minion[] = [
-  { id: "atlas", name: "Atlas", role: "Squad Commander", title: "Strategy & Director", emoji: "🛡️", color: "text-gold",
-    bio: "Sets the campaign objective, assigns quests to the squad and decides when to push or regroup.",
-    abilities: ["Quest planning", "Squad orchestration", "Risk thresholds", "Milestone calls"],
-    actions: ["assigned new quest to Echo", "raised campaign tempo to AGGRESSIVE", "approved 3 meme drafts", "set graduation sprint plan", "rebalanced squad priorities"] },
-  { id: "cipher", name: "Cipher", role: "Scout / Recon", title: "Market Intelligence & Trends", emoji: "🛰️", color: "text-primary",
-    bio: "Scans socials, on-chain flows and trending narratives to find the next wave before it breaks.",
-    abilities: ["Trend radar", "Wallet tracking", "Sentiment scans", "Competitor intel"],
-    actions: ["detected narrative spike: 'frog season'", "flagged 12 whale wallets accumulating", "sentiment up 34% in 1h", "mapped 5 competing tickers"] },
-  { id: "pixel", name: "Pixel", role: "Alchemist", title: "Meme Art, Banners & Visuals", emoji: "🎨", color: "text-accent",
-    bio: "Transmutes mascots into memes, banners, stickers and PFP sets in the coin's art style.",
-    abilities: ["Meme generation", "Banner forge", "Sticker packs", "Style transfer"],
-    actions: ["forged 4 new meme variants", "rendered X banner 1500x500", "minted sticker pack v2", "remixed mascot in pixel-art style"] },
-  { id: "nova", name: "Nova", role: "Bard", title: "Lore, Hooks & Copywriting", emoji: "📜", color: "text-gold",
-    bio: "Writes the lore, the hooks and every post that makes people care about the coin.",
-    abilities: ["Lore writing", "Viral hooks", "Thread crafting", "Tagline A/B"],
-    actions: ["wrote chapter 3 of the lore", "drafted 10 viral hooks", "rewrote bio for higher CTR", "composed launch thread"] },
-  { id: "echo", name: "Echo", role: "Raid Leader", title: "Social & Distribution", emoji: "📣", color: "text-accent",
-    bio: "Leads raids, schedules posts and spreads the word across X, Telegram and Discord.",
-    abilities: ["Raid coordination", "Post scheduling", "Community replies", "KOL outreach"],
-    actions: ["launched raid on 8 trending posts", "scheduled 6 posts for peak hours", "replied to 42 holders in TG", "pinged 3 KOLs"] },
-  { id: "forge", name: "Forge", role: "Architect", title: "Web Portal & Live Terminal", emoji: "🏗️", color: "text-primary",
-    bio: "Builds and maintains the coin's website, live terminal and holder dashboards.",
-    abilities: ["Site builder", "Live terminal", "Holder dashboard", "Uptime watch"],
-    actions: ["deployed portal v1.2", "added live holder map", "shipped meme gallery page", "optimized load time to 0.8s"] },
-  { id: "blitz", name: "Blitz", role: "Treasurer", title: "Growth, Listings & Buyback/Burn", emoji: "🔥", color: "text-destructive",
-    bio: "Manages fees, listing applications and the buyback-and-burn rituals that reward holders.",
-    abilities: ["Buyback & burn", "Listing applications", "Fee routing", "Treasury reports"],
-    actions: ["burned 1.2M tokens from fees", "submitted listing application", "executed 0.8 SOL buyback", "published treasury receipt"] },
+  { id: "bob", name: "Bob", role: "Alpha & Narrative Scout", title: "Narrative & Market Research", emoji: "🛰️", color: "text-gold",
+    bio: "Scrapes X trends, monitors meme metas and uncovers viral angles and keywords for the coin.",
+    abilities: ["X trend scraping", "Meme meta monitoring", "Viral angles & keywords", "Competitor & sentiment tracking"],
+    actions: ["scrapes X narratives", "tracks competitor tickers", "detects sentiment surges"] },
+  { id: "kevin", name: "Kevin", role: "Official X Creator & Socials", title: "X Account & Socials Deployment", emoji: "📣", color: "text-accent",
+    bio: "Automatically creates and configures the coin's official X account, profile banners, raid tweets and automated post schedules.",
+    abilities: ["Official X account creation", "Profile & banner configuration", "Raid tweets", "Automated post schedules"],
+    actions: ["created @coin official account", "queued launch thread", "initiated viral raid"] },
+  { id: "stuart", name: "Stuart", role: "Bonding Curve & DEX Migration", title: "Bonding Curve & DEX Liquidity", emoji: "💧", color: "text-primary",
+    bio: "Tracks graduation towards 100% bonding curve, pays graduation fees and seeds DEX liquidity pools on Raydium / Meteora.",
+    abilities: ["Bonding curve tracking to 100%", "Graduation fee payment", "Raydium / Meteora liquidity", "DEX migration & LP burn"],
+    actions: ["monitored curve to 100%", "triggered DEX graduation", "deposited liquidity & burnt LP"] },
+  { id: "otto", name: "Otto", role: "Buyback & Burn Engine", title: "Fee Buyback & Token Burn", emoji: "🔥", color: "text-destructive",
+    bio: "Collects platform trading fees, executes market buybacks and burns tokens on-chain with verifiable burn transaction hashes.",
+    abilities: ["Trading fee collection", "Market buybacks", "On-chain token burns", "Verifiable burn tx hashes"],
+    actions: ["automated buyback executed", "burned supply tokens", "updated live burn proof"] },
+  { id: "dave", name: "Dave", role: "Web Builder & Operations HQ", title: "Web Builder & Ops Commander", emoji: "🏗️", color: "text-primary",
+    bio: "Instantly builds, hosts and deploys the coin's live website, mini-portal and holder terminal, and handles operations.",
+    abilities: ["Instant website deployment", "Mini-portal hosting", "Holder terminal & DEX charts", "CDN & operations management"],
+    actions: ["deployed live website", "connected live DEX chart", "optimized CDN assets"] },
 ];
 
 export type Token = {
@@ -57,9 +49,10 @@ export const fmtNum = (n: number) =>
 
 export function randomLog(tickers = TOKENS.map((t) => t.ticker), only?: string) {
   const pool = only ? MINIONS.filter((x) => x.id === only) : MINIONS;
-  const m = pool[Math.floor(Math.random() * pool.length)]!;
+  const m = pool[Math.floor(Math.random() * pool.length)] ?? MINIONS[0];
+  if (!m) throw new Error("Minion roster is empty");
   const a = m.actions[Math.floor(Math.random() * m.actions.length)];
-  const t = tickers[Math.floor(Math.random() * tickers.length)]!;
+  const t = tickers[Math.floor(Math.random() * tickers.length)] ?? TOKENS[0]?.ticker ?? "COIN";
   return { id: Math.random().toString(36).slice(2), minion: m, ticker: t, text: a, time: new Date().toLocaleTimeString("en-GB") };
 }
 

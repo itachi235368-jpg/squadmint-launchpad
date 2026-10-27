@@ -50,6 +50,7 @@ function Launch() {
   const [dev, setDev] = useState(0.5);
   const [file, setFile] = useState<File | null>(null);
   const [desc, setDesc] = useState("");
+  const [links, setLinks] = useState({ twitter: "", telegram: "", website: "" });
   const [wallet, setWallet] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -78,6 +79,7 @@ function Launch() {
       setStatus("Uploading image and details…");
       const fd = new FormData();
       fd.append("image", file); fd.append("name", name); fd.append("symbol", ticker); fd.append("description", desc);
+      Object.entries(links).forEach(([k, v]) => v.trim() && fd.append(k, v.trim()));
       const { uri } = await upload({ data: fd });
       setStatus("Preparing launch…");
       const { Keypair, VersionedTransaction } = await import("@solana/web3.js");
@@ -127,6 +129,12 @@ function Launch() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setFile(f); setImg(URL.createObjectURL(f)); } }} />
             </label>
             <textarea className={cn(field, "mt-3")} rows={2} maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description (optional)" />
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {([["twitter", "X / Twitter link"], ["telegram", "Telegram link"], ["website", "Website link"]] as const).map(([k, ph]) => (
+                <input key={k} type="url" className={field} value={links[k]} placeholder={`${ph} (optional)`}
+                  onChange={(e) => setLinks((l) => ({ ...l, [k]: e.target.value }))} />
+              ))}
+            </div>
           </Step>
           <Step n={2} title="Pair">
             <div className="flex flex-wrap gap-2">
@@ -145,7 +153,12 @@ function Launch() {
           </Step>
           <Step n={4} title="Dev buy">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Optional</span><span className="font-mono">{dev} {pair}</span></div>
-            <input type="range" min={0} max={10} step={0.1} value={dev} onChange={(e) => setDev(+e.target.value)} className="mt-2 w-full accent-[var(--primary)]" />
+            <div className="relative mt-2">
+              <input type="number" inputMode="decimal" min={0} max={10} step="any" value={dev} placeholder="0"
+                onChange={(e) => setDev(Math.min(10, Math.max(0, Number(e.target.value) || 0)))} className={cn(field, "pr-16 font-mono")} />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">SOL</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">Type any amount from 0 to 10 SOL.</p>
             <svg viewBox="0 0 300 160" className="mt-4 w-full rounded-xl border bg-card p-2">
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
               <circle cx={devX * 300} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />

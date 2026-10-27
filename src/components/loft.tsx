@@ -84,7 +84,7 @@ function HeroCopy() {
   return (
     <>
       <h1 className="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-5xl">
-        Launch a coin.<br />Deploy a squad.<br /><em className="text-accent">Conquer the meta.</em>
+        With Minions,<br />memes will <em className="text-accent">never die.</em>
       </h1>
       <p className="mt-4 max-w-sm text-sm md:text-base">
         Your own AI marketing agency for memecoins. Memes, a website and X posts for your coin, every 15 minutes.

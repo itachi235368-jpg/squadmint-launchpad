@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import bob from "@/assets/agents/bob.png";
 import kevin from "@/assets/agents/kevin.png";
 import stuart from "@/assets/agents/stuart.png";
 import otto from "@/assets/agents/otto.png";
 import dave from "@/assets/agents/dave.png";
 import { Button } from "@/components/ui/button";
-import { MINIONS, TOKENS, fmtUsd, fmtNum, type Minion } from "@/lib/data";
-import { Terminal, pillDark, pillLine } from "@/components/ui-bits";
+import { MINIONS, TOKENS, fmtUsd, type Minion } from "@/lib/data";
+import { pillDark, pillLine } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
 type Station = {
@@ -116,35 +116,7 @@ function Inspector({ s, onClose }: { s: Station; onClose: () => void }) {
           <div className="mb-2 text-sm font-semibold">Sample work</div>
           <ul className="space-y-2">{s.work.map((w) => <li key={w} className="rounded-xl border bg-card p-3 font-mono text-xs">{w}</li>)}</ul>
         </div>
-        <div className="mt-6">
-          <div className="mb-2 text-sm font-semibold">Live task feed</div>
-          <Terminal only={s.id} title={`${m.name.toLowerCase()} · live`} rows={8} />
-        </div>
       </aside>
-    </div>
-  );
-}
-
-function BurnWidget() {
-  const [sound, setSound] = useState(false);
-  const [burned, setBurned] = useState(3_204_118_220);
-  useEffect(() => { const i = setInterval(() => setBurned((b) => b + Math.floor(Math.random() * 9000)), 1500); return () => clearInterval(i); }, []);
-  return (
-    <div className="glass fixed bottom-5 right-5 z-30 hidden w-80 items-center gap-3 rounded-full py-2 pl-2 pr-3 md:flex" style={{ boxShadow: "var(--glow-accent), 0 12px 32px -18px oklch(0 0 0 / .25)" }}>
-      <div className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent/30 to-accent/5 ring-1 ring-accent/30">
-        <Flame className="h-5 w-5 animate-pulse text-accent" />
-      </div>
-      <div className="min-w-0 flex-1 leading-tight">
-        <div className="font-display text-sm font-semibold">Bought back. Burned.</div>
-        <div className="font-mono text-[10px] text-muted-foreground">{fmtNum(burned)} tokens</div>
-        <a href="https://solscan.io/tx/4fzQ8sampleTxA9" target="_blank" rel="noreferrer" className="font-mono text-[10px] text-accent underline-offset-2 hover:underline">tx 4fzQ…A9 ↗ (sample)</a>
-      </div>
-      <button aria-label={sound ? "Mute" : "Unmute"} aria-pressed={sound} onClick={() => setSound(!sound)}
-        className={cn("relative h-6 w-11 shrink-0 rounded-full border transition", sound ? "bg-accent" : "bg-muted")}>
-        <span className={cn("absolute top-0.5 grid h-4.5 w-4.5 place-items-center rounded-full bg-card shadow-sm transition-all", sound ? "left-[22px]" : "left-0.5")} style={{ width: 18, height: 18 }}>
-          {sound ? <Volume2 className="h-2.5 w-2.5" /> : <VolumeX className="h-2.5 w-2.5" />}
-        </span>
-      </button>
     </div>
   );
 }
@@ -285,7 +257,6 @@ export function AgencyLoft() {
       </section>
 
       {open && <Inspector s={open} onClose={() => setOpen(null)} />}
-      <BurnWidget />
     </>
   );
 }

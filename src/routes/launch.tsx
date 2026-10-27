@@ -5,7 +5,7 @@ import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
-import { parseDevBuy } from "@/lib/launch-rules";
+import { parseDevBuy, curveFill, CURVE_GRADUATION_SOL } from "@/lib/launch-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
 const getPhantom = () => (window as unknown as { solana?: Phantom & { isPhantom?: boolean } }).solana;
@@ -102,7 +102,7 @@ function Launch() {
   const taken = ticker.length > 0 && isTickerTaken(ticker);
 
   const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${6 + x * 288},${150 - x * x * 140}`; }).join(" ");
-  const devX = Math.min(dev / 10, 1);
+  const devX = curveFill(dev);
 
   return (
     <div>
@@ -165,7 +165,7 @@ function Launch() {
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
               <circle cx={6 + devX * 288} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
             </svg>
-            <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · graduates at 100%</p>
+            <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · {CURVE_GRADUATION_SOL} SOL fills it</p>
           </Step>
           <div className="pt-8">
             <button type="button" onClick={() => void connect()} className="mb-3 w-full rounded-full border py-3 text-sm font-semibold">

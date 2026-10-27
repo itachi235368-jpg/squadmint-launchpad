@@ -33,7 +33,14 @@ describe("five-minion roster", () => {
   it("includes Stuart's 100% graduation, fees and both liquidity destinations", () => {
     const stuart = MINIONS.find((m) => m.id === "stuart");
     expect(stuart?.bio).toContain("100%");
-    expect(stuart?.bio).toContain("pays graduation fees");
+    expect(stuart?.bio).toContain("pays for DEX Screener");
     expect(stuart?.bio).toContain("Raydium / Meteora");
   });
+});
+
+describe("squad triggers", () => {
+  const t = (id: string) => MINIONS.find((m) => m.id === id)!.trigger;
+  it("Bob and Dave start at launch", () => { expect(t("bob")).toMatch(/launch/); expect(t("dave")).toMatch(/launch/); });
+  it("Kevin starts once market cap holds above $10K", () => expect(t("kevin")).toContain("$10K"));
+  it("Stuart pays DEX Screener when the curve completes", () => expect(t("stuart")).toMatch(/bonding curve.*DEX Screener/));
 });

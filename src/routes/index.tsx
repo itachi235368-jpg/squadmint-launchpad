@@ -44,6 +44,22 @@ function Index() {
       </section>
 
       <section>
+        <div className="mb-6">
+          <h2 className="font-display text-3xl font-medium tracking-tight">How the squad works</h2>
+          <p className="text-sm text-muted-foreground">Each minion steps in at the right moment in your coin's life.</p>
+        </div>
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {MINIONS.map((m, i) => (
+            <li key={m.id} className="card-premium rounded-2xl p-5">
+              <div className="font-mono text-[10px] tracking-widest text-accent">STEP {String(i + 1).padStart(2, "0")}</div>
+              <div className="mt-1 font-display text-xl font-medium">{m.name}</div>
+              <p className="mt-2 text-sm text-muted-foreground">{m.trigger}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section>
         <div className="mb-6 flex items-end justify-between">
           <div>
             <h2 className="font-display text-3xl font-medium tracking-tight">Your AI Squad</h2>

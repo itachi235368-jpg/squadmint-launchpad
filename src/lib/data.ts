@@ -1,26 +1,28 @@
 export type Minion = {
   id: string; name: string; role: string; title: string; emoji: string;
   color: string; bio: string; abilities: string[]; actions: string[];
+  /** When this minion starts working on a coin. */
+  trigger: string;
 };
 
 export const MINIONS: Minion[] = [
-  { id: "bob", name: "Bob", role: "Alpha & Narrative Scout", title: "Narrative & Market Research", emoji: "🛰️", color: "text-gold",
+  { id: "bob", trigger: "Starts at launch — researches narratives right away", name: "Bob", role: "Alpha & Narrative Scout", title: "Narrative & Market Research", emoji: "🛰️", color: "text-gold",
     bio: "Scrapes X trends, monitors meme metas and uncovers viral angles and keywords for the coin.",
     abilities: ["X trend scraping", "Meme meta monitoring", "Viral angles & keywords", "Competitor & sentiment tracking"],
     actions: ["scrapes X narratives", "tracks competitor tickers", "detects sentiment surges"] },
-  { id: "kevin", name: "Kevin", role: "Official X Creator & Socials", title: "X Account & Socials Deployment", emoji: "📣", color: "text-accent",
+  { id: "kevin", trigger: "Once market cap holds above $10K — builds the coin's X account", name: "Kevin", role: "Official X Creator & Socials", title: "X Account & Socials Deployment", emoji: "📣", color: "text-accent",
     bio: "Automatically creates and configures the coin's official X account, profile banners, raid tweets and automated post schedules.",
     abilities: ["Official X account creation", "Profile & banner configuration", "Raid tweets", "Automated post schedules"],
     actions: ["created @coin official account", "queued launch thread", "initiated viral raid"] },
-  { id: "stuart", name: "Stuart", role: "Bonding Curve & DEX Migration", title: "Bonding Curve & DEX Liquidity", emoji: "💧", color: "text-primary",
-    bio: "Tracks graduation towards 100% bonding curve, pays graduation fees and seeds DEX liquidity pools on Raydium / Meteora.",
-    abilities: ["Bonding curve tracking to 100%", "Graduation fee payment", "Raydium / Meteora liquidity", "DEX migration & LP burn"],
+  { id: "stuart", trigger: "When the bonding curve completes — pays for DEX Screener", name: "Stuart", role: "Bonding Curve & DEX Migration", title: "Bonding Curve & DEX Liquidity", emoji: "💧", color: "text-primary",
+    bio: "Tracks graduation towards 100% bonding curve, pays for DEX Screener and seeds DEX liquidity pools on Raydium / Meteora.",
+    abilities: ["Bonding curve tracking to 100%", "DEX Screener payment", "Raydium / Meteora liquidity", "DEX migration & LP burn"],
     actions: ["monitored curve to 100%", "triggered DEX graduation", "deposited liquidity & burnt LP"] },
-  { id: "otto", name: "Otto", role: "Buyback & Burn Engine", title: "Fee Buyback & Token Burn", emoji: "🔥", color: "text-destructive",
+  { id: "otto", trigger: "After graduation — runs ongoing buybacks and burns", name: "Otto", role: "Buyback & Burn Engine", title: "Fee Buyback & Token Burn", emoji: "🔥", color: "text-destructive",
     bio: "Collects platform trading fees, executes market buybacks and burns tokens on-chain with verifiable burn transaction hashes.",
     abilities: ["Trading fee collection", "Market buybacks", "On-chain token burns", "Verifiable burn tx hashes"],
     actions: ["automated buyback executed", "burned supply tokens", "updated live burn proof"] },
-  { id: "dave", name: "Dave", role: "Web Builder & Operations HQ", title: "Web Builder & Ops Commander", emoji: "🏗️", color: "text-primary",
+  { id: "dave", trigger: "Starts at launch — builds the website and keeps it updated", name: "Dave", role: "Web Builder & Operations HQ", title: "Web Builder & Ops Commander", emoji: "🏗️", color: "text-primary",
     bio: "Instantly builds, hosts and deploys the coin's live website, mini-portal and holder terminal, and handles operations.",
     abilities: ["Instant website deployment", "Mini-portal hosting", "Holder terminal & DEX charts", "CDN & operations management"],
     actions: ["deployed live website", "connected live DEX chart", "optimized CDN assets"] },

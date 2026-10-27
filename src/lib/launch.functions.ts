@@ -76,7 +76,7 @@ export const buildCreateTx = createServerFn({ method: "POST" })
         name: z.string().min(1).max(32),
         symbol: z.string().regex(/^[A-Z0-9]{1,10}$/),
         uri: z.string().url(),
-        devBuySol: z.number().min(0).max(10),
+        devBuySol: z.number().min(0),
       })
       .parse(d),
   )

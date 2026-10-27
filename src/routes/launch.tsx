@@ -154,11 +154,11 @@ function Launch() {
           <Step n={4} title="Dev buy">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Optional</span><span className="font-mono">{dev} {pair}</span></div>
             <div className="relative mt-2">
-              <input type="number" inputMode="decimal" min={0} max={10} step="any" value={dev} placeholder="0"
-                onChange={(e) => setDev(Math.min(10, Math.max(0, Number(e.target.value) || 0)))} className={cn(field, "pr-16 font-mono")} />
+              <input type="number" inputMode="decimal" min={0} step="any" value={dev} placeholder="0"
+                onChange={(e) => { const v = Number(e.target.value); setDev(Number.isFinite(v) && v > 0 ? v : 0); }} className={cn(field, "pr-16 font-mono")} />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">SOL</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">Type any amount from 0 to 10 SOL.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Any amount you like — you only pay what you can cover.</p>
             <svg viewBox="0 0 300 160" className="mt-4 w-full rounded-xl border bg-card p-2">
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
               <circle cx={devX * 300} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />

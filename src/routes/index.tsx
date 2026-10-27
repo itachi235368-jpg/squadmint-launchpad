@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
       { title: "MINIONS — The AI memecoin agency" },
       { name: "description", content: "Your own AI marketing agency for memecoins. Memes, a website and X posts for your coin, every 15 minutes." },
       { property: "og:title", content: "MINIONS — The AI memecoin agency" },
-      { property: "og:description", content: "Launch a coin. Deploy a squad. Conquer the meta." },
+      { property: "og:description", content: "With Minions, memes will never die." },
     ],
   }),
   component: Index,

@@ -4,7 +4,7 @@ import { z } from "zod";
 const toB64 = (buf: ArrayBuffer) => {
   const bytes = new Uint8Array(buf);
   let s = "";
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]!);
   return btoa(s);
 };
 

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { fmtUsd, squadActive, type Token, type Minion } from "@/lib/data";
+import { fmtMcap, fmtUsd, squadActive, type Token, type Minion } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { AVATARS } from "@/lib/avatars";
 
@@ -41,11 +41,12 @@ export function PairBadge({ pair }: { pair: string }) {
 }
 
 export function TokenCard({ t }: { t: Token }) {
-  const vol = t.mcap * 0.38, liq = t.mcap * 0.12;
   return (
     <Link to="/token/$ticker" params={{ ticker: t.ticker }} className="card-premium lift group block rounded-2xl p-5">
       <div className="flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-full bg-secondary text-xl ring-1 ring-border">{t.emoji}</div>
+        <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-secondary text-xl ring-1 ring-border">
+          {t.image ? <img src={t.image} alt="" className="h-full w-full object-cover" /> : (t.emoji || t.ticker.charAt(0))}
+        </div>
         <div className="min-w-0 flex-1">
           <div className="font-display text-lg font-medium leading-tight">{t.name}</div>
           <div className="font-mono text-xs text-muted-foreground">${t.ticker} · {t.age}</div>
@@ -55,14 +56,20 @@ export function TokenCard({ t }: { t: Token }) {
       <div className="mt-5 flex items-end justify-between">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Market cap</div>
-          <div className="font-mono text-xl font-semibold tracking-tight">{fmtUsd(t.mcap)}</div>
+          <div className="font-mono text-xl font-semibold tracking-tight">{fmtMcap(t.mcap)}</div>
         </div>
-        <span className={cn("rounded-full px-2 py-0.5 font-mono text-xs font-semibold", t.change >= 0 ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive")}>{t.change >= 0 ? "▲" : "▼"} {Math.abs(t.change)}%</span>
+        {t.mcap > 0 ? (
+          <span className={cn("rounded-full px-2 py-0.5 font-mono text-xs font-semibold", t.change >= 0 ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive")}>{t.change >= 0 ? "▲" : "▼"} {Math.abs(t.change)}%</span>
+        ) : (
+          <span className="rounded-full bg-accent/10 px-2 py-0.5 font-mono text-xs font-semibold text-accent">NEW</span>
+        )}
       </div>
-      <div className="mt-3 flex gap-1.5 font-mono text-[10px]">
-        <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">VOL <span className="text-foreground">{fmtUsd(vol)}</span></span>
-        <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">LIQ <span className="text-foreground">{fmtUsd(liq)}</span></span>
-      </div>
+      {t.mcap > 0 && (
+        <div className="mt-3 flex gap-1.5 font-mono text-[10px]">
+          <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">VOL <span className="text-foreground">{fmtUsd(t.mcap * 0.38)}</span></span>
+          <span className="rounded-md bg-secondary px-2 py-0.5 text-muted-foreground">LIQ <span className="text-foreground">{fmtUsd(t.mcap * 0.12)}</span></span>
+        </div>
+      )}
       <div className="mt-4 flex items-center justify-between font-mono text-[10px] text-muted-foreground"><span>Bonding curve</span><span className="text-foreground">{t.curve}%</span></div>
       <div className="mt-1.5"><CurveBar value={t.curve} /></div>
       <div className="mt-4 border-t pt-3"><SquadStatus t={t} /></div>

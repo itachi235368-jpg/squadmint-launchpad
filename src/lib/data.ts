@@ -31,16 +31,8 @@ export type Token = {
   curve: number; level: number; pair: "SOL" | "USDC" | "USD1"; age: string; holders: number; style: string; burned: number;
 };
 
-export const TOKENS: Token[] = [
-  { ticker: "FROGZ", pair: "SOL", name: "Frog Zeus", emoji: "🐸", mcap: 412000, change: 48.2, curve: 92, level: 14, age: "3h", holders: 2140, style: "Pixel Art", burned: 4200000 },
-  { ticker: "BANANA", pair: "USDC", name: "Banana Brigade", emoji: "🍌", mcap: 188000, change: 22.1, curve: 71, level: 9, age: "6h", holders: 1022, style: "Cartoon", burned: 1800000 },
-  { ticker: "GOGGLE", pair: "SOL", name: "Goggle Gang", emoji: "🥽", mcap: 96000, change: -4.3, curve: 44, level: 6, age: "1h", holders: 512, style: "3D Render", burned: 600000 },
-  { ticker: "NEKO", pair: "SOL", name: "Cyber Neko", emoji: "🐱", mcap: 642000, change: 12.8, curve: 98, level: 21, age: "1d", holders: 4810, style: "Anime", burned: 9100000 },
-  { ticker: "RUGNT", pair: "SOL", name: "Rug Not", emoji: "🧶", mcap: 8400, change: 140.5, curve: 12, level: 2, age: "12m", holders: 88, style: "Doodle", burned: 50000 },
-  { ticker: "MOONK", pair: "USD1", name: "Moon Monk", emoji: "🧘", mcap: 305000, change: 6.4, curve: 85, level: 12, age: "9h", holders: 1760, style: "Cyberpunk", burned: 3300000 },
-  { ticker: "BLOB", pair: "SOL", name: "Blobbington", emoji: "🫠", mcap: 6200, change: 31.0, curve: 19, level: 3, age: "25m", holders: 140, style: "Cartoon", burned: 90000 },
-  { ticker: "DRGN", pair: "USDC", name: "Pocket Dragon", emoji: "🐉", mcap: 158000, change: -11.2, curve: 63, level: 8, age: "4h", holders: 890, style: "Pixel Art", burned: 1200000 },
-];
+// No simulated coins: launched coins come from the backend once a launch flow writes them.
+export const TOKENS: Token[] = [];
 
 export const fmtUsd = (n: number) =>
   n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(1)}K` : `$${n.toFixed(0)}`;

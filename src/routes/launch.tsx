@@ -83,7 +83,7 @@ function Launch() {
       const fd = new FormData();
       fd.append("image", file); fd.append("name", name); fd.append("symbol", ticker); fd.append("description", desc);
       Object.entries(links).forEach(([k, v]) => v.trim() && fd.append(k, v.trim()));
-      const { uri } = await upload({ data: fd });
+      const { uri, image } = await upload({ data: fd });
       setStatus("Preparing launch…");
       const { Keypair, VersionedTransaction } = await import("@solana/web3.js");
       const mint = Keypair.generate();
@@ -94,6 +94,26 @@ function Launch() {
       const signed = await getPhantom()!.signTransaction(vtx);
       setStatus("Sending to Solana…");
       const r = await send({ data: { tx: bytesToB64(signed.serialize()) } });
+      setStatus("Listing your coin on the quest board…");
+      try {
+        await save({
+          data: {
+            mint: mint.publicKey.toBase58(),
+            signature: r.signature,
+            name, symbol: ticker, uri, image,
+            description: desc,
+            twitter: links.twitter.trim() || undefined,
+            telegram: links.telegram.trim() || undefined,
+            website: links.website.trim() || undefined,
+            creatorWallet: pk,
+            devBuySol: dev,
+          },
+        });
+        setSavedNote(null);
+      } catch (saveErr) {
+        console.error("saveLaunchCoin failed:", saveErr);
+        setSavedNote(saveErr instanceof Error ? saveErr.message : "Could not save the coin to the quest board.");
+      }
       setResult({ mint: mint.publicKey.toBase58(), ...r });
       setStatus(null);
     } catch (e) {
@@ -176,6 +196,11 @@ function Launch() {
             <button disabled={taken || busy} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>{busy ? status ?? "Working…" : "Launch coin & deploy squad"}</button>
             <p className="mt-3 text-xs text-muted-foreground">Launches on Pump.fun from your wallet. You pay the network fee plus your dev buy.</p>
             {error && <p className="mt-4 rounded-xl border border-destructive p-4 text-sm text-destructive">{error}</p>}
+            {savedNote && result && (
+              <p className="mt-3 rounded-xl border border-accent/50 p-3 text-xs text-muted-foreground">
+                Coin launched, but the quest board listing needs a retry: {savedNote} It will appear once the transaction confirms.
+              </p>
+            )}
             {result && (
               <div className="mt-4 animate-slidein rounded-xl border border-success p-4 text-sm">
                 <p className="text-success">${ticker} {result.confirmed ? "is live" : "was sent (still confirming)"}. Squad assembling: {MINIONS.map((m) => m.name).join(", ")}.</p>

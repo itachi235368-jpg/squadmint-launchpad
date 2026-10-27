@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      coins: {
+        Row: {
+          created_at: string
+          creator_wallet: string
+          description: string
+          dev_buy_sol: number
+          id: string
+          image: string
+          mint: string
+          name: string
+          signature: string
+          symbol: string
+          telegram: string | null
+          twitter: string | null
+          uri: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          creator_wallet: string
+          description?: string
+          dev_buy_sol?: number
+          id?: string
+          image: string
+          mint: string
+          name: string
+          signature: string
+          symbol: string
+          telegram?: string | null
+          twitter?: string | null
+          uri: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          creator_wallet?: string
+          description?: string
+          dev_buy_sol?: number
+          id?: string
+          image?: string
+          mint?: string
+          name?: string
+          signature?: string
+          symbol?: string
+          telegram?: string | null
+          twitter?: string | null
+          uri?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

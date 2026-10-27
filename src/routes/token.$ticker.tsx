@@ -82,7 +82,7 @@ function TokenHQ() {
       <div className="flex flex-wrap items-center gap-4">
         <div className="grid h-16 w-16 place-items-center rounded-lg bg-secondary text-4xl glow">{t.emoji}</div>
         <div>
-          <h1 className="font-display text-3xl font-bold">${t.ticker} <span className="text-lg text-muted-foreground">{t.name}</span></h1>
+          <h1 className="font-display text-3xl font-medium tracking-tight">${t.ticker} <span className="text-lg text-muted-foreground">{t.name}</span></h1>
           <div className="font-mono text-sm">{fmtUsd(t.mcap)} <span className={t.change >= 0 ? "text-success" : "text-destructive"}>{t.change >= 0 ? "+" : ""}{t.change}%</span> · {fmtNum(t.holders)} holders · Squad LVL {t.level}</div>
         </div>
       </div>

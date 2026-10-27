@@ -47,7 +47,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -58,7 +58,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head><HeadContent /></head>
       <body>{children}<Scripts /></body>
     </html>
@@ -76,7 +76,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-3">
           <Link to="/" className="font-display text-lg font-bold">
             <span className="text-primary">◆</span> minions<span className="text-accent">.quest</span>

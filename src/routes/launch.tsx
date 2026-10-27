@@ -35,7 +35,7 @@ function Launch() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
       <form className="panel space-y-5 p-6" onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
-        <h1 className="font-display text-3xl font-bold">Token Launch Portal</h1>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Token Launch Portal</h1>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1 text-sm">Token name<input required className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="Frog Zeus" /></label>
           <label className="space-y-1 text-sm">Ticker<input required maxLength={8} className={cn(field, "font-mono uppercase")} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} placeholder="FROGZ" /></label>

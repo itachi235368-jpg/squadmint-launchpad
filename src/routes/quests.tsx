@@ -30,7 +30,7 @@ function Quests() {
   }, [f, q]);
   return (
     <div>
-      <h1 className="font-display text-4xl font-bold">Live Quest Board</h1>
+      <h1 className="font-display text-4xl font-medium tracking-tight">Live Quest Board</h1>
       <p className="mt-1 text-muted-foreground">Every token, its squad level and how close it is to graduating.</p>
       <div className="mt-6 flex flex-wrap items-center gap-2">
         {FILTERS.map((x) => (

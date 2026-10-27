@@ -23,7 +23,7 @@ function Index() {
       <section className="grid items-center gap-8 lg:grid-cols-2">
         <div>
           <span className="rounded-full border border-primary/40 px-3 py-1 font-mono text-xs text-primary">● 7 agents online · Solana mainnet</span>
-          <h1 className="mt-5 font-display text-5xl font-bold leading-tight md:text-6xl">
+          <h1 className="mt-5 font-display text-5xl font-medium tracking-tight leading-tight md:text-6xl">
             Launch a coin.<br /><span className="text-gradient">Summon a squad.</span>
           </h1>
           <p className="mt-4 max-w-lg text-muted-foreground">
@@ -48,7 +48,7 @@ function Index() {
 
       <section>
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-display text-2xl font-bold">Featured Tokens</h2>
+          <h2 className="font-display text-2xl font-medium tracking-tight">Featured Tokens</h2>
           <Link to="/quests" className="text-sm text-primary">View all →</Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -57,7 +57,7 @@ function Index() {
       </section>
 
       <section>
-        <h2 className="mb-4 font-display text-2xl font-bold">Meet the Squad</h2>
+        <h2 className="mb-4 font-display text-2xl font-medium tracking-tight">Meet the Squad</h2>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-7">
           {MINIONS.map((x, i) => <MinionBadge key={x.id} m={x} active={i === sel} onClick={() => setSel(i)} />)}
         </div>
@@ -65,7 +65,7 @@ function Index() {
           <div className="flex items-center gap-4">
             <span className="text-5xl">{m.emoji}</span>
             <div>
-              <div className="font-display text-2xl font-bold">{m.name} <span className={`text-base ${m.color}`}>· {m.role}</span></div>
+              <div className="font-display text-2xl font-medium tracking-tight">{m.name} <span className={`text-base ${m.color}`}>· {m.role}</span></div>
               <div className="text-sm text-muted-foreground">{m.title}</div>
             </div>
           </div>

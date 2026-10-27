@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { listCoins } from "@/lib/coins.functions";
+import { listCoins, getCoinByTicker } from "@/lib/coins.functions";
 import { coinToToken } from "@/lib/data";
 
 /** All launched coins as display tokens; failures degrade to an empty list, never a thrown error. */
@@ -21,5 +21,3 @@ export const coinByTickerOptions = (ticker: string) =>
       return coin ? coinToToken(coin) : null;
     },
   });
-
-import { getCoinByTicker } from "@/lib/coins.functions";

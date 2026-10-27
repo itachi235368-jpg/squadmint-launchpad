@@ -2,11 +2,13 @@ import { z } from "zod";
 
 const base58 = /^[1-9A-HJ-NP-Za-km-z]+$/;
 const solanaAddr = z.string().regex(base58).refine((s) => s.length >= 32 && s.length <= 44, "Invalid Solana address length");
+/** Transaction signatures are ~87-88 base58 characters, longer than an address. */
+const txSignature = z.string().regex(base58).refine((s) => s.length >= 64 && s.length <= 96, "Invalid transaction signature");
 
 /** Payload the launch form sends after its transaction confirms on Solana. */
 export const coinLaunchSchema = z.object({
   mint: solanaAddr,
-  signature: solanaAddr.refine((s) => s.length >= 64, "Invalid transaction signature"),
+  signature: txSignature,
   name: z.string().trim().min(1).max(32),
   symbol: z.string().trim().regex(/^[A-Z0-9]{1,10}$/),
   uri: z.string().url(),

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { devBuySchema } from "@/lib/launch-rules";
 
 const toB64 = (buf: ArrayBuffer) => {
   const bytes = new Uint8Array(buf);
@@ -76,7 +77,7 @@ export const buildCreateTx = createServerFn({ method: "POST" })
         name: z.string().min(1).max(32),
         symbol: z.string().regex(/^[A-Z0-9]{1,10}$/),
         uri: z.string().url(),
-        devBuySol: z.number().min(0),
+        devBuySol: devBuySchema,
       })
       .parse(d),
   )

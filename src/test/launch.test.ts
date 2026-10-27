@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { devBuySchema, parseDevBuy } from "@/lib/launch-rules";
+import { CURVE_GRADUATION_SOL, curveFill, devBuySchema, parseDevBuy } from "@/lib/launch-rules";
 
 describe("dev buy amount", () => {
   it("accepts any positive amount, however large", () => {
@@ -23,5 +23,22 @@ describe("dev buy amount", () => {
     expect(parseDevBuy("250")).toBe(250);
     expect(parseDevBuy("-5")).toBe(0);
     expect(parseDevBuy("abc")).toBe(0);
+  });
+});
+
+describe("bonding curve", () => {
+  it("fills at 85 SOL", () => {
+    expect(CURVE_GRADUATION_SOL).toBe(85);
+    expect(curveFill(85)).toBe(1);
+  });
+
+  it("shows a smaller buy as part of the way up the curve", () => {
+    expect(curveFill(0)).toBe(0);
+    expect(curveFill(42.5)).toBeCloseTo(0.5, 10);
+    expect(curveFill(8.5)).toBeCloseTo(0.1, 10);
+  });
+
+  it("never reads past the top of the curve", () => {
+    expect(curveFill(200)).toBe(1);
   });
 });

@@ -101,7 +101,7 @@ function Launch() {
   }
   const taken = ticker.length > 0 && isTickerTaken(ticker);
 
-  const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${x * 300},${150 - x * x * 140}`; }).join(" ");
+  const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${6 + x * 288},${150 - x * x * 140}`; }).join(" ");
   const devX = Math.min(dev / 10, 1);
 
   return (
@@ -131,7 +131,7 @@ function Launch() {
             </label>
             <textarea className={cn(field, "mt-3")} rows={2} maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description (optional)" />
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {([["twitter", "X / Twitter link"], ["telegram", "Telegram link"], ["website", "Website link"]] as const).map(([k, ph]) => (
+              {([["twitter", "X link"], ["telegram", "Telegram"], ["website", "Website"]] as const).map(([k, ph]) => (
                 <input key={k} type="url" className={field} value={links[k]} placeholder={`${ph} (optional)`}
                   onChange={(e) => setLinks((l) => ({ ...l, [k]: e.target.value }))} />
               ))}
@@ -162,7 +162,7 @@ function Launch() {
             <p className="mt-1 text-xs text-muted-foreground">Any amount you like — you only pay what you can cover.</p>
             <svg viewBox="0 0 300 160" className="mt-4 w-full rounded-xl border bg-card p-2">
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
-              <circle cx={devX * 300} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
+              <circle cx={6 + devX * 288} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
             </svg>
             <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · graduates at 100%</p>
           </Step>

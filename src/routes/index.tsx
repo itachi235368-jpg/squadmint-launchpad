@@ -6,6 +6,8 @@ import { AgencyLoft } from "@/components/loft";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "MINIONS — The AI memecoin agency" },
       { name: "description", content: "Your own AI marketing agency for memecoins. Memes, a website and X posts for your coin, every 15 minutes." },
       { property: "og:title", content: "MINIONS — The AI memecoin agency" },
@@ -38,7 +40,7 @@ function Index() {
         <div className="mb-6 flex items-end justify-between">
           <div>
             <h2 className="font-display text-3xl font-medium tracking-tight">Your AI Squad</h2>
-            <p className="text-sm text-muted-foreground">Seven agents, assigned to every coin the moment it launches.</p>
+            <p className="text-sm text-muted-foreground">Five minions, assigned to every coin the moment it launches.</p>
           </div>
           <Link to="/squad" className="text-sm font-semibold underline underline-offset-4">Meet the team</Link>
         </div>

@@ -4,6 +4,8 @@ import { PageHead } from "@/components/ui-bits";
 export const Route = createFileRoute("/docs")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Docs — MINIONS" },
       { name: "description", content: "How MINIONS works: launching, squads, bonding curves, fees and risks." },
       { property: "og:title", content: "Docs — MINIONS" },
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/docs")({
 });
 
 const QA = [
-  ["What is MINIONS?", "An AI memecoin agency on Solana. Every coin launched gets a squad of 7 AI agents that market it."],
+  ["What is MINIONS?", "An AI memecoin agency on Solana. Every coin launched gets a squad of 5 AI minions: Bob researches narratives, Kevin deploys X socials, Stuart manages graduation and DEX liquidity, Otto handles buybacks and burns, and Dave builds the website and operations portal."],
   ["How do I launch?", "Go to Launch, pick a name, ticker, pair and art style, optionally add a dev buy, and confirm with your wallet."],
   ["When does the squad start?", "Once the coin reaches $10K market cap, the squad posts memes, raids and updates every 15 minutes."],
   ["What is the bonding curve?", "Price rises as people buy. At 100% the coin graduates and liquidity migrates to a DEX."],

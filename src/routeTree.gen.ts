@@ -10,33 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LaunchRouteImport } from './routes/launch'
+import { Route as QuestsRouteImport } from './routes/quests'
+import { Route as SquadRouteImport } from './routes/squad'
+import { Route as TokenTickerRouteImport } from './routes/token.$ticker'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LaunchRoute = LaunchRouteImport.update({
+  id: '/launch',
+  path: '/launch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestsRoute = QuestsRouteImport.update({
+  id: '/quests',
+  path: '/quests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SquadRoute = SquadRouteImport.update({
+  id: '/squad',
+  path: '/squad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TokenTickerRoute = TokenTickerRouteImport.update({
+  id: '/token/$ticker',
+  path: '/token/$ticker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/launch': typeof LaunchRoute
+  '/quests': typeof QuestsRoute
+  '/squad': typeof SquadRoute
+  '/token/$ticker': typeof TokenTickerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/launch': typeof LaunchRoute
+  '/quests': typeof QuestsRoute
+  '/squad': typeof SquadRoute
+  '/token/$ticker': typeof TokenTickerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/launch': typeof LaunchRoute
+  '/quests': typeof QuestsRoute
+  '/squad': typeof SquadRoute
+  '/token/$ticker': typeof TokenTickerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/launch' | '/quests' | '/squad' | '/token/$ticker'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/launch' | '/quests' | '/squad' | '/token/$ticker'
+  id: '__root__' | '/' | '/launch' | '/quests' | '/squad' | '/token/$ticker'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LaunchRoute: typeof LaunchRoute
+  QuestsRoute: typeof QuestsRoute
+  SquadRoute: typeof SquadRoute
+  TokenTickerRoute: typeof TokenTickerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +88,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/launch': {
+      id: '/launch'
+      path: '/launch'
+      fullPath: '/launch'
+      preLoaderRoute: typeof LaunchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quests': {
+      id: '/quests'
+      path: '/quests'
+      fullPath: '/quests'
+      preLoaderRoute: typeof QuestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/squad': {
+      id: '/squad'
+      path: '/squad'
+      fullPath: '/squad'
+      preLoaderRoute: typeof SquadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/token/$ticker': {
+      id: '/token/$ticker'
+      path: '/token/$ticker'
+      fullPath: '/token/$ticker'
+      preLoaderRoute: typeof TokenTickerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LaunchRoute: LaunchRoute,
+  QuestsRoute: QuestsRoute,
+  SquadRoute: SquadRoute,
+  TokenTickerRoute: TokenTickerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

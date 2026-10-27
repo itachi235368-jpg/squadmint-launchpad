@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  Outlet, Link, createRootRouteWithContext, useRouter, HeadContent, Scripts, type ErrorComponentProps,
+  Outlet, Link, useRouterState, createRootRouteWithContext, useRouter, HeadContent, Scripts, type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Home, Rocket, Coins, Users, Trophy, RefreshCw, BookOpen, Menu, X, Copy } from "lucide-react";
@@ -103,6 +103,7 @@ function SidebarBody({ onNav }: { onNav?: () => void }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isHome = useRouterState({ select: (r) => r.location.pathname }) === "/";
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
@@ -132,7 +133,7 @@ function RootComponent() {
               <button className={`${pillDark} !py-1.5 !px-4`}>Connect wallet</button>
             </div>
           </header>
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 md:px-8"><Outlet /></main>
+          <main className={isHome ? "w-full flex-1" : "mx-auto w-full max-w-6xl flex-1 px-4 py-10 md:px-8"}><Outlet /></main>
         </div>
       </div>
     </QueryClientProvider>

@@ -66,13 +66,13 @@ export function TokenCard({ t }: { t: Token }) {
   );
 }
 
-export function Terminal({ tickers, title = "squad feed", rows = 10 }: { tickers?: string[]; title?: string; rows?: number }) {
+export function Terminal({ tickers, title = "squad feed", rows = 10, only }: { tickers?: string[]; title?: string; rows?: number; only?: string }) {
   const [logs, setLogs] = useState<ReturnType<typeof randomLog>[]>([]);
   useEffect(() => {
-    setLogs(Array.from({ length: 5 }, () => randomLog(tickers)));
+    setLogs(Array.from({ length: 5 }, () => randomLog(tickers, only)));
     const i = setInterval(() => setLogs((l) => [randomLog(tickers), ...l].slice(0, rows)), 2000);
     return () => clearInterval(i);
-  }, [tickers?.join(","), rows]);
+  }, [tickers?.join(","), rows, only]);
   return (
     <div className="overflow-hidden rounded-2xl border bg-card">
       <div className="flex items-center gap-2 border-b px-4 py-2.5 font-mono text-xs text-muted-foreground">

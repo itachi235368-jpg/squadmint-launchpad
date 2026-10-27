@@ -165,7 +165,7 @@ function Launch() {
               <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} />
               <circle cx={6 + devX * 288} cy={150 - devX * devX * 140} r={5} fill="var(--accent)" />
             </svg>
-            <p className="mt-2 font-mono text-xs text-muted-foreground">Dev buy moves the curve to {(devX * devX * 100).toFixed(1)}% · {CURVE_GRADUATION_SOL} SOL fills it</p>
+            <p className="mt-2 font-mono text-xs text-muted-foreground">Curve {(devX * 100).toFixed(0)}% filled · {CURVE_GRADUATION_SOL} SOL to graduate</p>
           </Step>
           <div className="pt-8">
             <button type="button" onClick={() => void connect()} className="mb-3 w-full rounded-full border py-3 text-sm font-semibold">

@@ -26,6 +26,9 @@ export const Route = createFileRoute("/launch")({
   component: Launch,
 });
 
+export const Route = createFileRoute("/launch")({});
+
+
 const STYLES = ["Pixel Art", "Cartoon", "Anime", "3D Render", "Editorial", "Doodle"];
 const PAIRS = ["SOL"];
 const field = "w-full rounded-xl border bg-background px-4 py-2.5 outline-none focus:border-foreground/50";

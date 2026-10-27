@@ -21,13 +21,13 @@ type Station = {
 
 // x/y = feet anchor (% of scene), w = width %, bx/by = badge position %
 export const STATIONS: Station[] = [
-  { id: "forge", img: forge, zone: "WEB", tags: ["Design", "Development", "Optimisation", "Live hubs"], x: 40, y: 33, w: 7, bx: 30, by: 6,
+  { id: "forge", img: forge, zone: "WEB", tags: ["Design", "Development", "Optimisation", "Live hubs"], x: 40, y: 33, w: 7, bx: 30, by: 17,
     job: "Compiling and hosting the live mini-site at /frogz",
     work: ["build #128 · 42 modules · 0.8s", "deployed minions.quest/frogz", "lighthouse 98 · uptime 100%"] },
-  { id: "blitz", img: blitz, zone: "DEV & TRADING", tags: ["Growth", "Build", "Integrate", "Automate", "Buyback & burn"], x: 85, y: 30, w: 7, bx: 61, by: 4,
+  { id: "blitz", img: blitz, zone: "DEV & TRADING", tags: ["Growth", "Build", "Integrate", "Automate", "Buyback & burn"], x: 85, y: 30, w: 7, bx: 66, by: 15,
     job: "Tracking volume milestones and running the fee burn",
     work: ["Dexscreener enhanced info updated", "volume milestone $250K hit", "burned 1.2M $FROGZ · tx 4fz…a9"] },
-  { id: "cipher", img: cipher, zone: "RESEARCH", tags: ["Trends", "Narratives", "Competitors", "Opportunities"], x: 19, y: 82, w: 11, bx: 3, by: 50, flip: false,
+  { id: "cipher", img: cipher, zone: "RESEARCH", tags: ["Trends", "Narratives", "Competitors", "Opportunities"], x: 19, y: 82, w: 11, bx: 2, by: 96,
     job: "Scraping X narratives and viral keyword signals",
     work: ["'frog season' +340% mentions / 1h", "keyword spike: 'zeus', 'thunder'", "3 competitor tickers losing volume"] },
   { id: "nova", img: nova, zone: "CONTENT", tags: ["Viral hooks", "Meme scripts", "Video direction"], x: 40, y: 72, w: 8, bx: 29, by: 44,
@@ -39,7 +39,7 @@ export const STATIONS: Station[] = [
   { id: "echo", img: echo, zone: "SOCIAL & MARKETING", tags: ["Posts", "Captions", "Raids", "Distribution"], x: 61, y: 79, w: 9, bx: 63, by: 46,
     job: "Running the tweet queue and community raids",
     work: ["queued: 6 posts · next in 4m", "engagement 12.4K impressions / hr", "🚨 raid alert: 8 trending posts"] },
-  { id: "pixel", img: pixel, zone: "CREATIVE", tags: ["Character art", "Memes", "DEX banners", "Video stills"], x: 75, y: 70, w: 7, bx: 76, by: 37,
+  { id: "pixel", img: pixel, zone: "CREATIVE", tags: ["Character art", "Memes", "DEX banners", "Video stills"], x: 75, y: 70, w: 7, bx: 81, by: 52,
     job: "Drawing the mascot live in the coin's art style",
     work: ["🐸⚡", "🐸👑", "🐸🚀", "🐸💎", "🐸🔥", "🐸🌕"] },
 ];
@@ -147,7 +147,7 @@ function BurnWidget() {
 function HeroCopy() {
   return (
     <>
-      <h1 className="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-5xl xl:text-6xl">
+      <h1 className="font-display text-4xl font-medium leading-[1.02] tracking-tight md:text-5xl">
         Launch a coin.<br />Deploy a squad.<br /><em className="text-accent">Conquer the meta.</em>
       </h1>
       <p className="mt-4 max-w-sm text-sm md:text-base">

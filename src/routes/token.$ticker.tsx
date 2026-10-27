@@ -13,6 +13,8 @@ export const Route = createFileRoute("/token/$ticker")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
           { title: `$${loaderData.ticker} HQ — MINIONS` },
           { name: "description", content: `${loaderData.name} chart, swap, bonding curve and live AI squad feed.` },
           { property: "og:title", content: `$${loaderData.ticker} HQ — MINIONS` },
@@ -95,12 +97,12 @@ function AgentOutput({ t }: { t: Token }) {
         {tab === "Memes" && (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
             {memes.map((e, i) => <div key={i} className="grid aspect-square place-items-center rounded-xl border bg-secondary text-3xl">{t.emoji}{e}</div>)}
-            <p className="col-span-full text-xs text-muted-foreground">🎨 Pixel · {t.style} style · new batch every 15 min</p>
+            <p className="col-span-full text-xs text-muted-foreground">📣 Kevin · profile & raid visuals · {t.style} style · new batch every 15 min</p>
           </div>
         )}
         {tab === "Tweets" && (
           <ul className="space-y-3">
-            {tweets.map((x, i) => <li key={i} className="rounded-xl border p-4 text-sm"><div className="mb-1 text-xs text-muted-foreground">📜 Nova wrote · 📣 Echo posted · {(i + 1) * 15}m ago</div>{x}</li>)}
+            {tweets.map((x, i) => <li key={i} className="rounded-xl border p-4 text-sm"><div className="mb-1 text-xs text-muted-foreground">📣 Kevin · official X account & scheduled posts · {(i + 1) * 15}m ago</div>{x}</li>)}
           </ul>
         )}
         {tab === "Burns" && (
@@ -111,13 +113,13 @@ function AgentOutput({ t }: { t: Token }) {
                 <span className="text-muted-foreground">tx 4f{t.ticker.slice(0, 2).toLowerCase()}…{i}a9</span>
               </div>
             ))}
-            <p className="mt-3 text-xs text-muted-foreground">Total burned by Blitz: {fmtNum(t.burned)}</p>
+            <p className="mt-3 text-xs text-muted-foreground">Total burned by Otto: {fmtNum(t.burned)}</p>
           </div>
         )}
         {tab === "Lore" && (
           <div className="max-w-prose font-display text-lg leading-relaxed">
             <p>Chapter {Math.ceil(t.level / 3)} — In the age of endless charts, {t.name} rose from the mempool, {t.emoji} in hand, sworn to never sell the bottom.</p>
-            <p className="mt-3 font-sans text-xs text-muted-foreground">📜 Nova · updated with every milestone</p>
+            <p className="mt-3 font-sans text-xs text-muted-foreground">🛰️ Bob · narrative research updated with every milestone</p>
           </div>
         )}
       </div>

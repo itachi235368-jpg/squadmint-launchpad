@@ -1,13 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
-import atlas from "@/assets/agents/atlas.png";
-import cipher from "@/assets/agents/cipher.png";
-import nova from "@/assets/agents/nova.png";
-import echo from "@/assets/agents/echo.png";
-import pixel from "@/assets/agents/pixel.png";
-import forge from "@/assets/agents/forge.png";
-import blitz from "@/assets/agents/blitz.png";
+import bob from "@/assets/agents/cipher.png";
+import kevin from "@/assets/agents/echo.png";
+import stuart from "@/assets/agents/atlas.png";
+import otto from "@/assets/agents/blitz.png";
+import dave from "@/assets/agents/forge.png";
+import { Button } from "@/components/ui/button";
 import { MINIONS, TOKENS, fmtUsd, fmtNum, type Minion } from "@/lib/data";
 import { Terminal, pillDark, pillLine } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
@@ -20,30 +19,28 @@ type Station = {
 
 // x/y = feet anchor (% of scene), w = width %, bx/by = badge position %
 export const STATIONS: Station[] = [
-  { id: "forge", img: forge, zone: "WEB", tags: ["Design", "Development", "Optimisation", "Live hubs"], x: 40, y: 33, w: 7, bx: 33, by: 18,
-    job: "Compiling and hosting the live mini-site at /frogz",
-    work: ["build #128 · 42 modules · 0.8s", "deployed minions.quest/frogz", "lighthouse 98 · uptime 100%"] },
-  { id: "blitz", img: blitz, zone: "DEV & TRADING", tags: ["Growth", "Build", "Integrate", "Automate", "Buyback & burn"], x: 85, y: 30, w: 7, bx: 77, by: 15,
-    job: "Tracking volume milestones and running the fee burn",
-    work: ["Dexscreener enhanced info updated", "volume milestone $250K hit", "burned 1.2M $FROGZ · tx 4fz…a9"] },
-  { id: "cipher", img: cipher, zone: "RESEARCH", tags: ["Trends", "Narratives", "Competitors", "Opportunities"], x: 19, y: 82, w: 11, bx: 11, by: 59,
-    job: "Scraping X narratives and viral keyword signals",
-    work: ["'frog season' +340% mentions / 1h", "keyword spike: 'zeus', 'thunder'", "3 competitor tickers losing volume"] },
-  { id: "nova", img: nova, zone: "CONTENT", tags: ["Viral hooks", "Meme scripts", "Video direction"], x: 40, y: 72, w: 8, bx: 32, by: 55,
-    job: "Ideating this cycle's memes and captions",
-    work: ["hook: 'zeus doesn't chart, he strikes'", "meme script #4: frog vs bear boss fight", "caption: 'thunder only goes up ⚡'"] },
-  { id: "atlas", img: atlas, zone: "STRATEGY", tags: ["Cycle review", "Raids", "Sign-off"], x: 50, y: 92, w: 10, bx: 44, by: 71,
-    job: "Reviewing the latest meme, video script and tweets before publish",
-    work: ["✓ approved meme 'thunder frog'", "✓ approved video script v2", "✎ sent tweet #3 back to Nova"] },
-  { id: "echo", img: echo, zone: "SOCIAL & MARKETING", tags: ["Posts", "Captions", "Raids", "Distribution"], x: 61, y: 79, w: 9, bx: 53, by: 60,
-    job: "Running the tweet queue and community raids",
-    work: ["queued: 6 posts · next in 4m", "engagement 12.4K impressions / hr", "🚨 raid alert: 8 trending posts"] },
-  { id: "pixel", img: pixel, zone: "CREATIVE", tags: ["Character art", "Memes", "DEX banners", "Video stills"], x: 75, y: 70, w: 7, bx: 69, by: 55,
-    job: "Drawing the mascot live in the coin's art style",
-    work: ["🐸⚡", "🐸👑", "🐸🚀", "🐸💎", "🐸🔥", "🐸🌕"] },
+  { id: "bob", img: bob, zone: "NARRATIVE & RESEARCH", tags: ["X trends", "Meme metas", "Keywords", "Sentiment"], x: 20, y: 92, w: 11, bx: 12, by: 67,
+    job: "Scraping X trends and meme metas for viral angles and coin keywords",
+    work: ["scrapes X narratives · 'frog season' +340%", "tracks competitor tickers · 3 losing volume", "detects sentiment surges · keyword spike: 'zeus'"] },
+  { id: "kevin", img: kevin, zone: "X ACCOUNT & SOCIALS", tags: ["Official account", "Banners", "Launch thread", "Raids"], x: 49, y: 94, w: 10, bx: 41, by: 69,
+    job: "Creating and configuring @frogz with profile banners, raid tweets and automated post schedules",
+    work: ["created @coin official account · @frogz", "queued launch thread · 6 posts scheduled", "initiated viral raid · 8 trending posts"] },
+  { id: "stuart", img: stuart, zone: "CURVE & DEX LIQUIDITY", tags: ["100% curve", "Graduation fees", "Raydium / Meteora", "LP burn"], x: 78, y: 92, w: 10, bx: 70, by: 67,
+    job: "Tracking the curve towards 100%, paying graduation fees and seeding Raydium / Meteora liquidity",
+    work: ["monitored curve to 100% · graduation sample", "triggered DEX graduation · fees paid", "deposited liquidity & burnt LP · Raydium / Meteora"] },
+  { id: "otto", img: otto, zone: "BUYBACK & BURN", tags: ["Trading fees", "Market buybacks", "On-chain burns", "Tx proof"], x: 87, y: 45, w: 9, bx: 79, by: 24,
+    job: "Collecting platform trading fees, executing market buybacks and recording on-chain burn proof",
+    work: ["automated buyback executed · 0.8 SOL", "burned supply tokens · 1.2M $FROGZ", "updated live burn proof · sample tx 4fz…a9"] },
+  { id: "dave", img: dave, zone: "WEB & OPERATIONS HQ", tags: ["Live website", "Holder terminal", "DEX charts", "CDN assets"], x: 49, y: 46, w: 9, bx: 41, by: 25,
+    job: "Building, hosting and deploying /frogz, its holder terminal and live operations portal",
+    work: ["deployed live website · minions.quest/frogz", "connected live DEX chart · holder terminal online", "optimized CDN assets · load time 0.8s"] },
 ];
 
-const byId = (id: string) => MINIONS.find((m) => m.id === id)!;
+const byId = (id: string) => {
+  const m = MINIONS.find((m) => m.id === id);
+  if (!m) throw new Error(`Unknown minion station: ${id}`);
+  return m;
+};
 
 function LiveCoinsBoard({ className }: { className?: string }) {
   const top = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 4);
@@ -78,7 +75,6 @@ function LiveCoinsBoard({ className }: { className?: string }) {
 
 function Inspector({ s, onClose }: { s: Station; onClose: () => void }) {
   const m: Minion = byId(s.id);
-  const [style, setStyle] = useState("Pixel Art");
   return (
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-foreground/20" onClick={onClose} />
@@ -98,21 +94,7 @@ function Inspector({ s, onClose }: { s: Station; onClose: () => void }) {
         </div>
         <div className="mt-6">
           <div className="mb-2 text-sm font-semibold">Sample work</div>
-          {s.id === "pixel" ? (
-            <>
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                {["Pixel Art", "Cartoon", "Anime", "3D"].map((x) => (
-                  <button key={x} onClick={() => setStyle(x)} className={cn("rounded-full border px-3 py-1 text-xs", style === x && "border-primary bg-primary text-primary-foreground")}>{x}</button>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {s.work.map((w) => <div key={w} className="grid aspect-square place-items-center rounded-xl border bg-secondary text-3xl">{w}</div>)}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">Rendering in {style} style…</p>
-            </>
-          ) : (
-            <ul className="space-y-2">{s.work.map((w) => <li key={w} className="rounded-xl border bg-card p-3 font-mono text-xs">{w}</li>)}</ul>
-          )}
+          <ul className="space-y-2">{s.work.map((w) => <li key={w} className="rounded-xl border bg-card p-3 font-mono text-xs">{w}</li>)}</ul>
         </div>
         <div className="mt-6">
           <div className="mb-2 text-sm font-semibold">Live task feed</div>
@@ -194,12 +176,12 @@ export function AgencyLoft() {
   return (
     <>
       {/* Desktop scene */}
-      <section className="relative hidden w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
+      <section className="relative hidden min-h-[720px] w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
         <SceneBackdrop />
 
-        <div className="absolute left-[3%] top-[6%] z-20 max-w-[34%]"><HeroCopy /></div>
+        <div className="absolute left-[3%] top-[6%] z-20 max-w-[38%]"><HeroCopy /></div>
 
-        <LiveCoinsBoard className="absolute left-[48%] top-[10%] z-10 w-[10%] min-w-[150px]" />
+        <LiveCoinsBoard className="absolute left-[62%] top-[7%] z-10 w-[14%] min-w-[150px]" />
 
         {STATIONS.map((s, i) => {
           const m = byId(s.id);
@@ -227,7 +209,7 @@ export function AgencyLoft() {
               <button onClick={() => setOpen(s)} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)}
                 className={cn("absolute z-[5] max-w-[16%] -translate-y-full rounded-lg border bg-background/85 px-2.5 py-1.5 text-left backdrop-blur transition", active && "border-accent glow-accent")}
                 style={{ left: `${s.bx}%`, top: `${s.by}%` }}>
-                <div className="font-display text-sm font-bold leading-none tracking-wide">{s.zone}</div>
+               <div className="font-display text-xs font-bold leading-snug">{s.zone}</div>
                 <div className="mt-1 font-mono text-[8px] uppercase leading-snug text-muted-foreground">{s.tags.join(" • ")}</div>
               </button>
             </div>
@@ -247,14 +229,14 @@ export function AgencyLoft() {
           {STATIONS.map((s) => {
             const m = byId(s.id);
             return (
-              <button key={s.id} onClick={() => setOpen(s)} className="flex items-center gap-3 rounded-2xl border bg-card p-3 text-left">
+              <Button variant="ghost" key={s.id} aria-label={`Open ${m.name}`} onClick={() => setOpen(s)} className="h-auto justify-start whitespace-normal gap-3 rounded-2xl border bg-card p-3 text-left">
                 <img src={s.img} alt={m.name} loading="lazy" className="h-16 w-16 shrink-0 animate-floaty object-contain" />
                 <div className="min-w-0">
                   <div className="font-mono text-[10px] tracking-widest text-muted-foreground">{s.zone}</div>
                   <div className="font-display text-lg font-medium">{m.name}</div>
-                  <div className="truncate text-xs text-muted-foreground">{s.job}</div>
+                  <div className="text-xs text-muted-foreground">{m.role}</div>
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

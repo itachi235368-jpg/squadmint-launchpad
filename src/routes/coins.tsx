@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/coins")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Coins — MINIONS" },
       { name: "description", content: "Directory of every coin launched on MINIONS with market caps, bonding curves and squad status." },
       { property: "og:title", content: "Coins — MINIONS" },

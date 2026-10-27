@@ -4,6 +4,8 @@ import { PageHead } from "@/components/ui-bits";
 export const Route = createFileRoute("/flywheel")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Flywheel — MINIONS" },
       { name: "description", content: "How trading fees fund the AI squad and buyback-and-burn." },
       { property: "og:title", content: "Flywheel — MINIONS" },
@@ -18,7 +20,7 @@ const LOOP = [
   ["Squad work", "Fees fund memes, posts, raids and the site."],
   ["Attention", "More content brings more eyes and holders."],
   ["Volume", "New holders trade, generating more fees."],
-  ["Buyback & burn", "Blitz burns supply from the treasury share."],
+  ["Buyback & burn", "Otto collects trading fees, executes market buybacks and burns tokens with verifiable on-chain proof."],
 ];
 
 function Flywheel() {

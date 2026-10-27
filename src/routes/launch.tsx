@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/launch")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Launch a coin — MINIONS" },
-      { name: "description", content: "Launch a Solana memecoin and hire a squad of 7 AI agents to market it." },
+      { name: "description", content: "Launch a Solana memecoin and hire a squad of 5 AI minions to market it." },
       { property: "og:title", content: "Launch a coin — MINIONS" },
       { property: "og:description", content: "Name it, pick a style, deploy a squad." },
     ],
@@ -47,7 +49,7 @@ function Launch() {
 
   return (
     <div>
-      <PageHead kicker="Launch" title="Launch a coin" sub="Four steps. Your squad of 7 agents starts working the moment it's live." />
+      <PageHead kicker="Launch" title="Launch a coin" sub="Four steps. Your squad of 5 minions starts working the moment it's live." />
       <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
         <form onSubmit={(e) => { e.preventDefault(); if (!taken) setDone(true); }}>
           <Step n={1} title="Name & ticker">
@@ -84,7 +86,7 @@ function Launch() {
                 <button type="button" key={s} onClick={() => setStyle(s)} className={cn("rounded-xl border px-3 py-3 text-sm", style === s && "border-foreground bg-secondary font-semibold")}>{s}</button>
               ))}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Pixel will make every meme and banner in this style.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Kevin configures the coin's profile banners in this style.</p>
           </Step>
           <Step n={4} title="Dev buy">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Optional</span><span className="font-mono">{dev} {pair}</span></div>
@@ -111,7 +113,7 @@ function Launch() {
               <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full border bg-secondary">{img ? <img src={img} alt="" className="h-full w-full object-cover" /> : "?"}</div>
               <div><div className="font-display text-lg">{name || "Your coin"}</div><div className="font-mono text-xs text-muted-foreground">${ticker || "TICKER"} · {pair}</div></div>
             </div>
-            <div className="mt-4 border-t pt-4 text-xs text-muted-foreground">Style: {style}<br />Squad: 7 agents · starts raiding at $10K</div>
+            <div className="mt-4 border-t pt-4 text-xs text-muted-foreground">Style: {style}<br />Squad: 5 minions · starts raiding at $10K</div>
           </div>
         </aside>
       </div>

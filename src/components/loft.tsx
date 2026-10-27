@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
-import loft from "@/assets/loft.jpg";
 import atlas from "@/assets/agents/atlas.png";
 import cipher from "@/assets/agents/cipher.png";
 import nova from "@/assets/agents/nova.png";
@@ -21,25 +20,25 @@ type Station = {
 
 // x/y = feet anchor (% of scene), w = width %, bx/by = badge position %
 export const STATIONS: Station[] = [
-  { id: "forge", img: forge, zone: "WEB", tags: ["Design", "Development", "Optimisation", "Live hubs"], x: 40, y: 33, w: 7, bx: 30, by: 17,
+  { id: "forge", img: forge, zone: "WEB", tags: ["Design", "Development", "Optimisation", "Live hubs"], x: 40, y: 33, w: 7, bx: 33, by: 18,
     job: "Compiling and hosting the live mini-site at /frogz",
     work: ["build #128 · 42 modules · 0.8s", "deployed minions.quest/frogz", "lighthouse 98 · uptime 100%"] },
-  { id: "blitz", img: blitz, zone: "DEV & TRADING", tags: ["Growth", "Build", "Integrate", "Automate", "Buyback & burn"], x: 85, y: 30, w: 7, bx: 66, by: 15,
+  { id: "blitz", img: blitz, zone: "DEV & TRADING", tags: ["Growth", "Build", "Integrate", "Automate", "Buyback & burn"], x: 85, y: 30, w: 7, bx: 77, by: 15,
     job: "Tracking volume milestones and running the fee burn",
     work: ["Dexscreener enhanced info updated", "volume milestone $250K hit", "burned 1.2M $FROGZ · tx 4fz…a9"] },
-  { id: "cipher", img: cipher, zone: "RESEARCH", tags: ["Trends", "Narratives", "Competitors", "Opportunities"], x: 19, y: 82, w: 11, bx: 2, by: 96,
+  { id: "cipher", img: cipher, zone: "RESEARCH", tags: ["Trends", "Narratives", "Competitors", "Opportunities"], x: 19, y: 82, w: 11, bx: 11, by: 59,
     job: "Scraping X narratives and viral keyword signals",
     work: ["'frog season' +340% mentions / 1h", "keyword spike: 'zeus', 'thunder'", "3 competitor tickers losing volume"] },
-  { id: "nova", img: nova, zone: "CONTENT", tags: ["Viral hooks", "Meme scripts", "Video direction"], x: 40, y: 72, w: 8, bx: 29, by: 44,
+  { id: "nova", img: nova, zone: "CONTENT", tags: ["Viral hooks", "Meme scripts", "Video direction"], x: 40, y: 72, w: 8, bx: 32, by: 55,
     job: "Ideating this cycle's memes and captions",
     work: ["hook: 'zeus doesn't chart, he strikes'", "meme script #4: frog vs bear boss fight", "caption: 'thunder only goes up ⚡'"] },
-  { id: "atlas", img: atlas, zone: "STRATEGY", tags: ["Cycle review", "Raids", "Sign-off"], x: 50, y: 92, w: 10, bx: 36, by: 96,
+  { id: "atlas", img: atlas, zone: "STRATEGY", tags: ["Cycle review", "Raids", "Sign-off"], x: 50, y: 92, w: 10, bx: 44, by: 71,
     job: "Reviewing the latest meme, video script and tweets before publish",
     work: ["✓ approved meme 'thunder frog'", "✓ approved video script v2", "✎ sent tweet #3 back to Nova"] },
-  { id: "echo", img: echo, zone: "SOCIAL & MARKETING", tags: ["Posts", "Captions", "Raids", "Distribution"], x: 61, y: 79, w: 9, bx: 63, by: 46,
+  { id: "echo", img: echo, zone: "SOCIAL & MARKETING", tags: ["Posts", "Captions", "Raids", "Distribution"], x: 61, y: 79, w: 9, bx: 53, by: 60,
     job: "Running the tweet queue and community raids",
     work: ["queued: 6 posts · next in 4m", "engagement 12.4K impressions / hr", "🚨 raid alert: 8 trending posts"] },
-  { id: "pixel", img: pixel, zone: "CREATIVE", tags: ["Character art", "Memes", "DEX banners", "Video stills"], x: 75, y: 70, w: 7, bx: 81, by: 52,
+  { id: "pixel", img: pixel, zone: "CREATIVE", tags: ["Character art", "Memes", "DEX banners", "Video stills"], x: 75, y: 70, w: 7, bx: 69, by: 55,
     job: "Drawing the mascot live in the coin's art style",
     work: ["🐸⚡", "🐸👑", "🐸🚀", "🐸💎", "🐸🔥", "🐸🌕"] },
 ];
@@ -161,15 +160,43 @@ function HeroCopy() {
   );
 }
 
+// Subtle themed backdrop (no photo): soft ivory gradient, faint dot grid, hairline floor planes.
+function SceneBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0" style={{
+        background:
+          "radial-gradient(120% 90% at 82% 6%, color-mix(in oklab, var(--accent) 9%, transparent), transparent 55%)," +
+          "radial-gradient(90% 80% at 6% 96%, color-mix(in oklab, var(--primary) 6%, transparent), transparent 60%)," +
+          "linear-gradient(180deg, color-mix(in oklab, var(--secondary) 70%, var(--background)) 0%, var(--background) 60%)",
+      }} />
+      <div className="absolute inset-0" style={{
+        backgroundImage: "radial-gradient(color-mix(in oklab, var(--primary) 14%, transparent) 1px, transparent 1px)",
+        backgroundSize: "26px 26px",
+        opacity: 0.5,
+        maskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
+        WebkitMaskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
+      }} />
+      <div className="absolute inset-x-0" style={{ top: "37%" }}>
+        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, color-mix(in oklab, var(--primary) 16%, transparent) 18%, color-mix(in oklab, var(--primary) 16%, transparent) 82%, transparent)" }} />
+        <div className="h-12" style={{ background: "linear-gradient(180deg, color-mix(in oklab, var(--primary) 4%, transparent), transparent)" }} />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-[14%]" style={{ background: "linear-gradient(180deg, transparent, color-mix(in oklab, var(--secondary) 80%, var(--background)))" }} />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(60% 55% at 12% 20%, color-mix(in oklab, var(--background) 92%, transparent) 0%, transparent 62%)" }} />
+    </div>
+  );
+}
+
 export function AgencyLoft() {
+
   const [hover, setHover] = useState<string | null>(null);
   const [open, setOpen] = useState<Station | null>(null);
   return (
     <>
       {/* Desktop scene */}
       <section className="relative hidden w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
-        <img src={loft} alt="Two-story agency loft office" width={1920} height={1024} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(100deg,var(--background)_0%,color-mix(in_oklab,var(--background)_70%,transparent)_22%,transparent_42%)]" />
+        <SceneBackdrop />
+
         <div className="absolute left-[3%] top-[6%] z-20 max-w-[34%]"><HeroCopy /></div>
 
         <LiveCoinsBoard className="absolute left-[48%] top-[10%] z-10 w-[10%] min-w-[150px]" />
@@ -179,7 +206,13 @@ export function AgencyLoft() {
           const active = hover === s.id;
           return (
             <div key={s.id}>
+              <div aria-hidden className="pointer-events-none absolute z-[3]" style={{
+                left: `${s.x}%`, top: `${s.y}%`, width: `${s.w * 1.2}%`, height: `${s.w * 0.18}%`,
+                transform: "translate(-50%, -50%)",
+                background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 24%, transparent), transparent 70%)",
+              }} />
               <button
+
                 onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onClick={() => setOpen(s)}
                 className="absolute z-10 origin-bottom transition-transform hover:scale-105"
                 style={{ left: `${s.x}%`, top: `${s.y}%`, width: `${s.w}%`, transform: "translate(-50%, -100%)" }}
@@ -204,9 +237,12 @@ export function AgencyLoft() {
 
       {/* Mobile stack */}
       <section className="space-y-6 px-4 py-8 lg:hidden">
-        <HeroCopy />
-        <img src={loft} alt="Agency loft office" width={1920} height={1024} className="w-full rounded-2xl border" />
+        <div className="relative overflow-hidden rounded-3xl border bg-background px-5 py-8">
+          <SceneBackdrop />
+          <div className="relative z-10"><HeroCopy /></div>
+        </div>
         <LiveCoinsBoard />
+
         <div className="grid gap-3 sm:grid-cols-2">
           {STATIONS.map((s) => {
             const m = byId(s.id);

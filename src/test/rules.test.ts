@@ -1,15 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { MINIONS, TOKENS, isTickerTaken, randomLog, squadActive } from "@/lib/data";
+import { MINIONS, TOKENS, isTickerTaken, randomLog, squadActive, type Token } from "@/lib/data";
 import { STATIONS } from "@/components/loft";
 
 describe("launch & squad rules", () => {
-  it("flags an existing ticker as taken", () => {
-    expect(isTickerTaken("frogz")).toBe(true);
-    expect(isTickerTaken("NEWCOIN")).toBe(false);
+  it("ships with no simulated coins", () => {
+    expect(TOKENS).toEqual([]);
+    expect(isTickerTaken("FROGZ")).toBe(false);
   });
   it("squad activates at $10K market cap", () => {
-    const base = TOKENS[0];
-    if (!base) throw new Error("Missing test token");
+    const base: Token = { ticker: "TEST", name: "Test", emoji: "🧪", mcap: 0, change: 0, curve: 0, level: 1, pair: "SOL", age: "1m", holders: 0, style: "Cartoon", burned: 0 };
     expect(squadActive({ ...base, mcap: 9999 })).toBe(false);
     expect(squadActive({ ...base, mcap: 10000 })).toBe(true);
   });

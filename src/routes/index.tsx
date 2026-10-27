@@ -31,9 +31,16 @@ function Index() {
           </div>
           <Link to="/coins" className="text-sm font-semibold underline underline-offset-4">All coins</Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {top.map((t) => <TokenCard key={t.ticker} t={t} />)}
-        </div>
+        {top.length ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {top.map((t) => <TokenCard key={t.ticker} t={t} />)}
+          </div>
+        ) : (
+          <div className="flex flex-col items-start gap-4 rounded-2xl border border-dashed p-8">
+            <p className="font-display text-xl">No coins yet. Be the first to launch one and hire the squad.</p>
+            <Link to="/launch" className={pillDark}>Launch a Coin</Link>
+          </div>
+        )}
       </section>
 
       <section>

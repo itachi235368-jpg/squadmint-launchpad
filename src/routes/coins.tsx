@@ -64,7 +64,12 @@ function Coins() {
             ))}
           </tbody>
         </table>
-        {!list.length && <p className="p-6 text-muted-foreground">No coins match.</p>}
+        {!list.length && (
+          <div className="flex flex-col items-start gap-3 p-8">
+            <p className="text-muted-foreground">{TOKENS.length ? "No coins match." : "No coins launched yet."}</p>
+            {!TOKENS.length && <Link to="/launch" className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground">Launch the first coin</Link>}
+          </div>
+        )}
       </div>
     </div>
   );

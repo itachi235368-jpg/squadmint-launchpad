@@ -19,7 +19,7 @@ const STEPS = [
   ["$10K", "Squad activates", "Bob scouts narratives and Kevin deploys X posts and raids every 15 minutes."],
   ["$25K", "Website goes live", "Dave ships the coin's site and live terminal."],
   ["$50K", "Narrative & social momentum", "Bob detects viral angles and sentiment surges; Kevin queues launch threads and raids."],
-  ["$69K", "Graduation", "Stuart tracks the curve to 100%, pays graduation fees and seeds Raydium / Meteora liquidity."],
+  ["$69K", "Graduation", "Stuart tracks the curve to 100%, pays for DEX Screener and seeds Raydium / Meteora liquidity."],
   ["$100K", "Live operations", "Dave connects the live DEX chart and optimizes CDN assets."],
   ["$250K", "Burn rituals", "Otto executes buybacks and on-chain burns from collected fees with verifiable tx hashes."],
 ];

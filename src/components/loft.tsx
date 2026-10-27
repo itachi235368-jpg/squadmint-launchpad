@@ -23,17 +23,17 @@ export const STATIONS: Station[] = [
     job: "Scraping X trends and meme metas for viral angles and coin keywords",
     work: ["scrapes X narratives · 'frog season' +340%", "tracks competitor tickers · 3 losing volume", "detects sentiment surges · keyword spike: 'zeus'"] },
   { id: "kevin", status: "POSTING", img: kevin, zone: "X ACCOUNT & SOCIALS", tags: ["Official account", "Banners", "Launch thread", "Raids"], x: 49, y: 94, w: 10, bx: 41, by: 69,
-    job: "Creating and configuring @frogz with profile banners, raid tweets and automated post schedules",
-    work: ["created @coin official account · @frogz", "queued launch thread · 6 posts scheduled", "initiated viral raid · 8 trending posts"] },
+    job: "Creating and configuring the coin's official X account with profile banners, raid tweets and automated post schedules",
+    work: ["created @coin official account", "queued launch thread · 6 posts scheduled", "initiated viral raid · 8 trending posts"] },
   { id: "stuart", status: "READY", img: stuart, zone: "CURVE & DEX LIQUIDITY", tags: ["100% curve", "Graduation fees", "Raydium / Meteora", "LP burn"], x: 78, y: 92, w: 10, bx: 70, by: 67,
     job: "Tracking the curve towards 100%, paying graduation fees and seeding Raydium / Meteora liquidity",
     work: ["monitored curve to 100% · graduation sample", "triggered DEX graduation · fees paid", "deposited liquidity & burnt LP · Raydium / Meteora"] },
   { id: "otto", status: "BURNING", img: otto, zone: "BUYBACK & BURN", tags: ["Trading fees", "Market buybacks", "On-chain burns", "Tx proof"], x: 87, y: 45, w: 9, bx: 79, by: 24,
     job: "Collecting platform trading fees, executing market buybacks and recording on-chain burn proof",
-    work: ["automated buyback executed · 0.8 SOL", "burned supply tokens · 1.2M $FROGZ", "updated live burn proof · sample tx 4fz…a9"] },
+    work: ["automated buyback executed · 0.8 SOL", "burned supply tokens", "updated live burn proof · tx hash recorded"] },
   { id: "dave", status: "STANDBY", img: dave, zone: "WEB & OPERATIONS HQ", tags: ["Live website", "Holder terminal", "DEX charts", "CDN assets"], x: 49, y: 46, w: 9, bx: 41, by: 25,
-    job: "Building, hosting and deploying /frogz, its holder terminal and live operations portal",
-    work: ["deployed live website · minions.quest/frogz", "connected live DEX chart · holder terminal online", "optimized CDN assets · load time 0.8s"] },
+    job: "Building, hosting and deploying the coin's live website, holder terminal and operations portal",
+    work: ["deployed live website", "connected live DEX chart · holder terminal online", "optimized CDN assets · load time 0.8s"] },
 ];
 
 const byId = (id: string) => {
@@ -62,6 +62,12 @@ function LiveCoinsBoard({ className }: { className?: string }) {
       </div>
       <div className="px-3 pt-1.5 text-[8px] tracking-widest opacity-40">TOP 4 · BY MARKET CAP</div>
       <div className="space-y-0.5 p-1.5">
+        {!top.length && (
+          <Link to="/launch" className="block rounded-lg px-1.5 py-3 text-center transition hover:bg-primary-foreground/5">
+            <span className="block text-[10px] font-semibold">No coins yet</span>
+            <span className="block text-[9px] opacity-50">Launch the first one →</span>
+          </Link>
+        )}
         {top.map((t, i) => {
           const ch = +(t.change + Math.sin(tick + i) * 1.5).toFixed(1);
           const up = ch >= 0;

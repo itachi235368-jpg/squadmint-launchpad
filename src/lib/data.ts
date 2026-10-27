@@ -56,9 +56,9 @@ export const fmtNum = (n: number) =>
   n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : `${n}`;
 
 export function randomLog(tickers = TOKENS.map((t) => t.ticker)) {
-  const m = MINIONS[Math.floor(Math.random() * MINIONS.length)];
+  const m = MINIONS[Math.floor(Math.random() * MINIONS.length)]!;
   const a = m.actions[Math.floor(Math.random() * m.actions.length)];
-  const t = tickers[Math.floor(Math.random() * tickers.length)];
+  const t = tickers[Math.floor(Math.random() * tickers.length)]!;
   return { id: Math.random().toString(36).slice(2), minion: m, ticker: t, text: a, time: new Date().toLocaleTimeString("en-GB") };
 }
 

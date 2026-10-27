@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [sel, setSel] = useState(0);
-  const m = MINIONS[sel];
+  const m = MINIONS[sel]!;
   return (
     <div className="space-y-16">
       <section className="grid items-center gap-8 lg:grid-cols-2">

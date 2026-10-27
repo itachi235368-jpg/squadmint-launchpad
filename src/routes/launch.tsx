@@ -5,7 +5,8 @@ import { MINIONS, isTickerTaken } from "@/lib/data";
 import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
-import { uploadMetadata, buildCreateTx, sendSignedTx, saveLaunchCoin } from "@/lib/launch.functions";
+import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functions";
+import { saveLaunchCoin } from "@/lib/coins.functions";
 import { coinsQueryOptions } from "@/lib/coins-query";
 import { parseDevBuy, curveFill, CURVE_GRADUATION_SOL } from "@/lib/launch-rules";
 

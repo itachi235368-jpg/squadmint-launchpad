@@ -6,7 +6,7 @@ import kevin from "@/assets/agents/kevin.png";
 import stuart from "@/assets/agents/stuart.png";
 import otto from "@/assets/agents/otto.png";
 import dave from "@/assets/agents/dave.png";
-import { MINIONS, TOKENS, fmtUsd, type Minion } from "@/lib/data";
+import { MINIONS, fmtMcap, type Minion, type Token } from "@/lib/data";
 import { pillDark, pillLine } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
@@ -121,8 +121,7 @@ function SceneBackdrop() {
 }
 
 // Classic live feed: real launches only, newest-style table rows.
-function LiveFeed() {
-  const rows = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 6);
+function LiveFeed({ rows }: { rows: Token[] }) {
   return (
     <div className="card-premium overflow-hidden rounded-2xl">
       <div className="flex items-center justify-between border-b px-5 py-3">
@@ -130,13 +129,22 @@ function LiveFeed() {
         <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />LIVE</div>
       </div>
       <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b bg-secondary/50 px-5 py-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-        <span>COIN</span><span className="text-right">MARKET CAP</span><span className="w-14 text-right">24H</span>
+        <span>COIN</span><span className="text-right">MARKET CAP</span><span className="w-14 text-right">STATUS</span>
       </div>
       {rows.length ? rows.map((t) => (
-        <Link key={t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b px-5 py-3 text-sm transition last:border-0 hover:bg-secondary/60">
-          <span className="flex items-center gap-2 font-semibold"><span>{t.emoji}</span>${t.ticker}</span>
-          <span className="text-right font-mono">{fmtUsd(t.mcap)}</span>
-          <span className={cn("w-14 text-right font-mono", t.change >= 0 ? "text-success" : "text-destructive")}>{t.change >= 0 ? "+" : ""}{t.change}%</span>
+        <Link key={t.mint ?? t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b px-5 py-3 text-sm transition last:border-0 hover:bg-secondary/60">
+          <span className="flex items-center gap-2 font-semibold">
+            <span className="grid h-6 w-6 shrink-0 place-items-center overflow-hidden rounded-full bg-secondary font-mono text-[10px]">
+              {t.image ? <img src={t.image} alt="" className="h-full w-full object-cover" /> : t.ticker.charAt(0)}
+            </span>
+            <span className="min-w-0"><span className="block truncate">${t.ticker}</span><span className="block font-mono text-[10px] font-normal text-muted-foreground">{t.name} · {t.age}</span></span>
+          </span>
+          <span className="text-right font-mono">{fmtMcap(t.mcap)}</span>
+          {t.mcap > 0 ? (
+            <span className={cn("w-14 text-right font-mono", t.change >= 0 ? "text-success" : "text-destructive")}>{t.change >= 0 ? "+" : ""}{t.change}%</span>
+          ) : (
+            <span className="w-14 text-right font-mono text-accent">NEW</span>
+          )}
         </Link>
       )) : (
         <div className="px-5 py-10 text-center">
@@ -149,7 +157,7 @@ function LiveFeed() {
   );
 }
 
-export function AgencyLoft() {
+export function AgencyLoft({ coins }: { coins: Token[] }) {
   const [open, setOpen] = useState<Station | null>(null);
   return (
     <>
@@ -158,7 +166,7 @@ export function AgencyLoft() {
         <SceneBackdrop />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-8 pt-12 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:pt-16">
           <div><HeroCopy /></div>
-          <LiveFeed />
+          <LiveFeed rows={coins.slice(0, 6)} />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-4 pb-16 md:px-8">

@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MINIONS, TOKENS } from "@/lib/data";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { MINIONS } from "@/lib/data";
 import { AgentCard, TokenCard, pillDark } from "@/components/ui-bits";
 import { AgencyLoft } from "@/components/loft";
+import { coinsQueryOptions } from "@/lib/coins-query";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,26 +16,29 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "With Minions, memes will never die." },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(coinsQueryOptions()),
   component: Index,
 });
 
 function Index() {
-  const top = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 6);
+  const { data } = useSuspenseQuery(coinsQueryOptions());
+  const coins = data.coins;
+  const top = coins.slice(0, 6);
   return (
     <div>
-      <AgencyLoft />
+      <AgencyLoft coins={coins} />
       <div className="mx-auto max-w-6xl space-y-20 px-4 py-16 md:px-8">
       <section>
         <div className="mb-6 flex items-end justify-between">
           <div>
             <h2 className="font-display text-3xl font-medium tracking-tight">Live coins</h2>
-            <p className="text-sm text-muted-foreground">Top coins by market cap. Squads start raiding at $10K.</p>
+            <p className="text-sm text-muted-foreground">Latest coins launched on Minions. Squads start raiding at $10K.</p>
           </div>
           <Link to="/coins" className="text-sm font-semibold underline underline-offset-4">All coins</Link>
         </div>
         {top.length ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {top.map((t) => <TokenCard key={t.ticker} t={t} />)}
+            {top.map((t) => <TokenCard key={t.mint ?? t.ticker} t={t} />)}
           </div>
         ) : (
           <div className="flex flex-col items-start gap-4 rounded-2xl border border-dashed p-8">

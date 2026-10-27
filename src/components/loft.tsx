@@ -176,10 +176,10 @@ export function AgencyLoft() {
   return (
     <>
       {/* Desktop scene */}
-      <section className="relative hidden w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
+      <section className="relative hidden min-h-[720px] w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
         <SceneBackdrop />
 
-        <div className="absolute left-[3%] top-[6%] z-20 max-w-[34%]"><HeroCopy /></div>
+        <div className="absolute left-[3%] top-[6%] z-20 max-w-[38%]"><HeroCopy /></div>
 
         <LiveCoinsBoard className="absolute left-[62%] top-[7%] z-10 w-[14%] min-w-[150px]" />
 

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { fmtUsd, randomLog, squadActive, type Token, type Minion } from "@/lib/data";
+import { useState } from "react";
+import { fmtUsd, squadActive, type Token, type Minion } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { AVATARS } from "@/lib/avatars";
 

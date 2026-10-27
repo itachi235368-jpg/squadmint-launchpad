@@ -26,7 +26,6 @@ export const Route = createFileRoute("/launch")({
   component: Launch,
 });
 
-export const Route = createFileRoute("/launch")({});
 
 
 const STYLES = ["Pixel Art", "Cartoon", "Anime", "3D Render", "Editorial", "Doodle"];

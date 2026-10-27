@@ -1,12 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowRight, X } from "lucide-react";
 import bob from "@/assets/agents/bob.png";
 import kevin from "@/assets/agents/kevin.png";
 import stuart from "@/assets/agents/stuart.png";
 import otto from "@/assets/agents/otto.png";
 import dave from "@/assets/agents/dave.png";
-import { Button } from "@/components/ui/button";
 import { MINIONS, TOKENS, fmtUsd, type Minion } from "@/lib/data";
 import { pillDark, pillLine } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
@@ -42,56 +41,6 @@ const byId = (id: string) => {
   return m;
 };
 
-function Spark({ seed, up }: { seed: number; up: boolean }) {
-  const pts = Array.from({ length: 14 }, (_, i) => {
-    const y = 10 - (Math.sin(i * 0.9 + seed) * 3 + (up ? i * 0.35 : -i * 0.25) + 3);
-    return `${i * 4},${Math.max(1, Math.min(13, y))}`;
-  }).join(" ");
-  return <svg viewBox="0 0 52 14" className="h-3.5 w-12"><polyline points={pts} fill="none" strokeWidth="1.25" className={up ? "stroke-success" : "stroke-destructive"} /></svg>;
-}
-
-function LiveCoinsBoard({ className }: { className?: string }) {
-  const top = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 4);
-  const [tick, setTick] = useState(0);
-  useEffect(() => { const i = setInterval(() => setTick((t) => t + 1), 2500); return () => clearInterval(i); }, []);
-  return (
-    <div className={cn("overflow-hidden rounded-2xl border border-primary-foreground/10 bg-primary font-mono text-primary-foreground shadow-[0_30px_60px_-30px_oklch(0_0_0/0.5)]", className)}>
-      <div className="flex items-center justify-between border-b border-primary-foreground/10 px-3 py-2">
-        <div className="text-[10px] font-semibold tracking-[0.2em]">LIVE COINS</div>
-        <div className="flex items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 text-[8px] text-success"><span className="h-1 w-1 animate-pulse rounded-full bg-success" />LIVE</div>
-      </div>
-      <div className="px-3 pt-1.5 text-[8px] tracking-widest opacity-40">TOP 4 · BY MARKET CAP</div>
-      <div className="space-y-0.5 p-1.5">
-        {!top.length && (
-          <Link to="/launch" className="block rounded-lg px-1.5 py-3 text-center transition hover:bg-primary-foreground/5">
-            <span className="block text-[10px] font-semibold">No coins yet</span>
-            <span className="block text-[9px] opacity-50">Launch the first one →</span>
-          </Link>
-        )}
-        {top.map((t, i) => {
-          const ch = +(t.change + Math.sin(tick + i) * 1.5).toFixed(1);
-          const up = ch >= 0;
-          return (
-            <Link key={t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="block rounded-lg px-1.5 py-1.5 transition hover:bg-primary-foreground/5">
-              <div key={tick} className="flex items-center gap-2 rounded animate-flash">
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-foreground/10 text-xs">{t.emoji}</span>
-                <span className="min-w-0 flex-1 leading-tight">
-                  <span className="block text-[10px] font-semibold">${t.ticker}</span>
-                  <span className="block text-[9px] opacity-50">{fmtUsd(t.mcap)}</span>
-                </span>
-                <span className="text-right leading-tight">
-                  <Spark seed={i + tick * 0.3} up={up} />
-                  <span className={cn("block text-[9px]", up ? "text-success" : "text-destructive")}>{up ? "▲" : "▼"} {Math.abs(ch)}%</span>
-                </span>
-              </div>
-              <span className="mt-1 block h-[3px] overflow-hidden rounded-full bg-primary-foreground/10"><span className="block h-full rounded-full bg-gradient-to-r from-accent/60 to-accent" style={{ width: `${t.curve}%` }} /></span>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 function Inspector({ s, onClose }: { s: Station; onClose: () => void }) {
   const m: Minion = byId(s.id);
@@ -165,94 +114,72 @@ function SceneBackdrop() {
         maskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
         WebkitMaskImage: "radial-gradient(130% 110% at 50% 45%, black 20%, transparent 80%)",
       }} />
-      <div className="absolute inset-x-0" style={{ top: "37%" }}>
-        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, color-mix(in oklab, var(--primary) 16%, transparent) 18%, color-mix(in oklab, var(--primary) 16%, transparent) 82%, transparent)" }} />
-        <div className="h-12" style={{ background: "linear-gradient(180deg, color-mix(in oklab, var(--primary) 4%, transparent), transparent)" }} />
-      </div>
       <div className="absolute inset-x-0 bottom-0 h-[14%]" style={{ background: "linear-gradient(180deg, transparent, color-mix(in oklab, var(--secondary) 80%, var(--background)))" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(60% 55% at 12% 20%, color-mix(in oklab, var(--background) 92%, transparent) 0%, transparent 62%)" }} />
     </div>
   );
 }
 
-export function AgencyLoft() {
+// Classic live feed: real launches only, newest-style table rows.
+function LiveFeed() {
+  const rows = [...TOKENS].sort((a, b) => b.mcap - a.mcap).slice(0, 6);
+  return (
+    <div className="card-premium overflow-hidden rounded-2xl">
+      <div className="flex items-center justify-between border-b px-5 py-3">
+        <div className="font-display text-lg font-medium">Live feed</div>
+        <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />LIVE</div>
+      </div>
+      <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b bg-secondary/50 px-5 py-2 font-mono text-[10px] tracking-widest text-muted-foreground">
+        <span>COIN</span><span className="text-right">MARKET CAP</span><span className="w-14 text-right">24H</span>
+      </div>
+      {rows.length ? rows.map((t) => (
+        <Link key={t.ticker} to="/token/$ticker" params={{ ticker: t.ticker }} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 border-b px-5 py-3 text-sm transition last:border-0 hover:bg-secondary/60">
+          <span className="flex items-center gap-2 font-semibold"><span>{t.emoji}</span>${t.ticker}</span>
+          <span className="text-right font-mono">{fmtUsd(t.mcap)}</span>
+          <span className={cn("w-14 text-right font-mono", t.change >= 0 ? "text-success" : "text-destructive")}>{t.change >= 0 ? "+" : ""}{t.change}%</span>
+        </Link>
+      )) : (
+        <div className="px-5 py-10 text-center">
+          <p className="font-display text-lg">No launches yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">New coins appear here the moment they launch.</p>
+          <Link to="/launch" className={cn(pillDark, "mt-4 inline-flex")}>Launch the first coin</Link>
+        </div>
+      )}
+    </div>
+  );
+}
 
-  const [hover, setHover] = useState<string | null>(null);
+export function AgencyLoft() {
   const [open, setOpen] = useState<Station | null>(null);
   return (
     <>
       <StatusTicker />
-      {/* Desktop scene */}
-      <section className="relative hidden min-h-[720px] w-full overflow-hidden lg:block" style={{ aspectRatio: "1920 / 1024" }}>
+      <section className="relative overflow-hidden">
         <SceneBackdrop />
-
-        <div className="absolute left-[3%] top-[6%] z-20 max-w-[38%]"><HeroCopy /></div>
-
-        <LiveCoinsBoard className="absolute left-[62%] top-[7%] z-10 w-[14%] min-w-[150px]" />
-
-        {STATIONS.map((s, i) => {
-          const m = byId(s.id);
-          const active = hover === s.id;
-          return (
-            <div key={s.id}>
-              <div aria-hidden className="pointer-events-none absolute z-[3] rounded-[50%] border border-foreground/10 transition duration-300" style={{
-                left: `${s.x}%`, top: `${s.y}%`, width: `${s.w * 1.35}%`, aspectRatio: "4 / 1",
-                transform: "translate(-50%, -50%)",
-                background: "radial-gradient(ellipse at 50% 35%, color-mix(in oklab, var(--card) 95%, transparent), color-mix(in oklab, var(--secondary) 80%, transparent) 70%)",
-                boxShadow: active ? "0 0 0 1px color-mix(in oklab, var(--accent) 50%, transparent), 0 0 40px 6px color-mix(in oklab, var(--accent) 35%, transparent), 0 14px 24px -10px oklch(0 0 0 / .3)" : "inset 0 1px 0 var(--card), 0 14px 24px -12px oklch(0 0 0 / .25)",
-              }} />
-              <div aria-hidden className="pointer-events-none absolute z-[2] animate-ring rounded-[50%]" style={{
-                left: `${s.x}%`, top: `${s.y + 0.6}%`, width: `${s.w * 1.7}%`, aspectRatio: "4 / 1", transform: "translate(-50%, -50%)",
-                background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--accent) 28%, transparent), transparent 70%)",
-              }} />
-              <button
-
-                onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)} onClick={() => setOpen(s)}
-                className="absolute z-10 origin-bottom transition-transform duration-300"
-                style={{ left: `${s.x}%`, top: `${s.y - (active ? 1.2 : 0.4)}%`, width: `${s.w}%`, transform: "translate(-50%, -100%)" }}
-                aria-label={`Open ${m.name}`}>
-                <img src={s.img} alt={m.name} className="w-full animate-floaty transition-[filter]"
-                  style={{ animationDelay: `${i * 0.4}s`, animationDuration: `${2.6 + (i % 3) * 0.5}s`,
-                    filter: active ? "drop-shadow(0 0 18px var(--accent)) drop-shadow(0 8px 12px rgb(0 0 0 / .35))" : "drop-shadow(0 8px 12px rgb(0 0 0 / .35))" }} />
-                <span className={cn("absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2.5 py-0.5 font-mono text-[10px] text-primary-foreground transition", active ? "opacity-100" : "opacity-0")}>
-                  {m.name} · {m.role}
-                </span>
-              </button>
-              <button onClick={() => setOpen(s)} onMouseEnter={() => setHover(s.id)} onMouseLeave={() => setHover(null)}
-                className={cn("glass absolute z-[5] max-w-[16%] -translate-y-full rounded-xl px-3 py-2 text-left transition duration-300", active && "-translate-y-[calc(100%+4px)] border-accent/50 glow-accent")}
-                style={{ left: `${s.bx}%`, top: `${s.by}%` }}>
-               <div className="mb-1 flex items-center gap-1.5 font-mono text-[8px] font-semibold tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />{s.status}</div>
-                <div className="font-display text-xs font-bold leading-snug">{s.zone}</div>
-                <div className="mt-1 font-mono text-[8px] uppercase leading-snug text-muted-foreground">{s.tags.join(" • ")}</div>
-              </button>
-            </div>
-          );
-        })}
-      </section>
-
-      {/* Mobile stack */}
-      <section className="space-y-6 px-4 py-8 lg:hidden">
-        <div className="relative overflow-hidden rounded-3xl border bg-background px-5 py-8">
-          <SceneBackdrop />
-          <div className="relative z-10"><HeroCopy /></div>
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-8 pt-12 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:pt-16">
+          <div><HeroCopy /></div>
+          <LiveFeed />
         </div>
-        <LiveCoinsBoard />
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          {STATIONS.map((s) => {
-            const m = byId(s.id);
-            return (
-              <Button variant="ghost" key={s.id} aria-label={`Open ${m.name}`} onClick={() => setOpen(s)} className="card-premium lift h-auto justify-start whitespace-normal gap-3 rounded-2xl p-3 text-left">
-                <img src={s.img} alt={m.name} loading="lazy" className="h-16 w-16 shrink-0 animate-floaty object-contain" />
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />{s.status}</div>
-                  <div className="font-mono text-[10px] tracking-widest text-muted-foreground">{s.zone}</div>
-                  <div className="font-display text-lg font-medium">{m.name}</div>
+        <div className="relative mx-auto max-w-6xl px-4 pb-16 md:px-8">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {STATIONS.map((s, i) => {
+              const m = byId(s.id);
+              return (
+                <button key={s.id} onClick={() => setOpen(s)} aria-label={`Open ${m.name}`}
+                  className="group flex flex-col items-center rounded-2xl p-3 text-center transition hover:-translate-y-1">
+                  <div className="relative w-full max-w-[160px]">
+                    <img src={s.img} alt={m.name} className="relative z-10 w-full animate-floaty transition-[filter] group-hover:drop-shadow-[0_0_18px_var(--accent)]"
+                      style={{ animationDelay: `${i * 0.35}s`, animationDuration: `${2.8 + (i % 3) * 0.5}s` }} />
+                    <div aria-hidden className="mx-auto -mt-2 h-3 w-2/3 animate-ring rounded-[50%]" style={{ background: "radial-gradient(ellipse, oklch(0 0 0 / .18), transparent 70%)" }} />
+                  </div>
+                  <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] tracking-widest text-success"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />{s.status}</div>
+                  <div className="font-display text-xl font-medium">{m.name}</div>
                   <div className="text-xs text-muted-foreground">{m.role}</div>
-                </div>
-              </Button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 

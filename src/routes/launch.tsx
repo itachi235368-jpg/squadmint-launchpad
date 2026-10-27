@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { MINIONS, isTickerTaken } from "@/lib/data";
 import { PageHead, pillDark } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadMetadata, buildCreateTx, sendSignedTx, saveLaunchCoin } from "@/lib/launch.functions";
+import { coinsQueryOptions } from "@/lib/coins-query";
 import { parseDevBuy, curveFill, CURVE_GRADUATION_SOL } from "@/lib/launch-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/launch")({
       { property: "og:description", content: "Name it, pick a style, deploy a squad." },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(coinsQueryOptions()),
   component: Launch,
 });
 
@@ -123,7 +126,8 @@ function Launch() {
       setStatus(null);
     } finally { setBusy(false); }
   }
-  const taken = ticker.length > 0 && isTickerTaken(ticker);
+  const { data: coinsData } = useSuspenseQuery(coinsQueryOptions());
+  const taken = ticker.length > 0 && (isTickerTaken(ticker) || coinsData.coins.some((c) => c.ticker === ticker));
 
   const pts = Array.from({ length: 41 }, (_, i) => { const x = i / 40; return `${6 + x * 288},${150 - x * x * 140}`; }).join(" ");
   const devX = curveFill(dev);

@@ -38,8 +38,14 @@ export const uploadMetadata = createServerFn({ method: "POST" })
         name: z.string().trim().min(1).max(32),
         symbol: z.string().trim().regex(/^[A-Z0-9]{1,10}$/),
         description: z.string().max(500).default(""),
+        twitter: z.string().url().max(200).optional(),
+        telegram: z.string().url().max(200).optional(),
+        website: z.string().url().max(200).optional(),
       })
-      .parse({ name: data.get("name"), symbol: data.get("symbol"), description: data.get("description") ?? "" });
+      .parse({
+        name: data.get("name"), symbol: data.get("symbol"), description: data.get("description") ?? "",
+        twitter: data.get("twitter") ?? undefined, telegram: data.get("telegram") ?? undefined, website: data.get("website") ?? undefined,
+      });
     return { file, ...meta };
   })
   .handler(async ({ data }) => {
@@ -51,7 +57,9 @@ export const uploadMetadata = createServerFn({ method: "POST" })
       symbol: data.symbol,
       description: data.description,
       image,
-      website: "https://minions.quest",
+      twitter: data.twitter,
+      telegram: data.telegram,
+      website: data.website ?? "https://minions.quest",
       showName: true,
     });
     const uri = await pinataUpload(jwt, new Blob([metaJson], { type: "application/json" }), "metadata.json");

@@ -4,7 +4,7 @@ import { ArrowRight, Volume2, VolumeX, X, Flame } from "lucide-react";
 import bob from "@/assets/agents/cipher.png";
 import kevin from "@/assets/agents/echo.png";
 import stuart from "@/assets/agents/atlas.png";
-import otto from "@/assets/agents/blitz.png";
+import otto from "@/assets/agents/otto.png";
 import dave from "@/assets/agents/forge.png";
 import { Button } from "@/components/ui/button";
 import { MINIONS, TOKENS, fmtUsd, fmtNum, type Minion } from "@/lib/data";

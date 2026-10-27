@@ -130,9 +130,10 @@ function Launch() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setFile(f); setImg(URL.createObjectURL(f)); } }} />
             </label>
             <textarea className={cn(field, "mt-3")} rows={2} maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description (optional)" />
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <p className="mt-3 text-xs text-muted-foreground">Links (optional)</p>
+            <div className="mt-1.5 grid gap-3 sm:grid-cols-3">
               {([["twitter", "X link"], ["telegram", "Telegram"], ["website", "Website"]] as const).map(([k, ph]) => (
-                <input key={k} type="url" className={field} value={links[k]} placeholder={`${ph} (optional)`}
+                <input key={k} type="url" className={field} value={links[k]} placeholder={ph}
                   onChange={(e) => setLinks((l) => ({ ...l, [k]: e.target.value }))} />
               ))}
             </div>

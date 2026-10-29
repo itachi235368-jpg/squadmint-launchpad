@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { TREASURY_SHARE_BPS, TREASURY_WALLET, walletAddressSchema } from "@/lib/treasury-rules";
+import { walletAddressSchema } from "@/lib/treasury-rules";
 
 export const treasuryState = createServerFn({ method: "POST" })
   .inputValidator(d => z.object({ mint: walletAddressSchema }).parse(d))

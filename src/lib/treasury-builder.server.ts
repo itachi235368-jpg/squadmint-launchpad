@@ -28,7 +28,7 @@ export async function buildDirectTreasuryTransaction(mintAddress: string, userAd
   }
   const instructions: TransactionInstruction[] = [ComputeBudgetProgram.setComputeUnitLimit({ units: 600_000 })];
   // Only sweep nonempty buckets, avoiding rent/ATA setup on legacy empty curves.
-  if (curve.creatorFees && !curve.creatorFees.isZero()) instructions.push(await PUMP_SDK.sweepCreatorFeeInstruction({
+  if (!curve.creatorFee.isZero()) instructions.push(await PUMP_SDK.sweepCreatorFeeInstruction({
     payer: user, mint, creator: curve.creator, quoteMint: NATIVE, quoteTokenProgram: TOKEN,
   }));
   if (poolInfo) {

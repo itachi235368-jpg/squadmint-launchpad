@@ -12,7 +12,7 @@ export const treasuryState = createServerFn({ method: "POST" })
 export const buildTreasuryTx = createServerFn({ method: "POST" })
   .inputValidator(d => z.object({ mint: walletAddressSchema, publicKey: walletAddressSchema }).parse(d))
   .handler(async ({ data }) => {
-    const { readTreasuryState, inspectTreasuryTransaction } = await import("@/lib/treasury.server");
+    const { readTreasuryState, inspectTreasuryTransaction, simulateTreasuryTransaction } = await import("@/lib/treasury.server");
     const existing = await readTreasuryState(data.mint);
     if (existing.connected) return { connected: true as const, tx: null };
     const response = await fetch("https://fun-block.pump.fun/agents/sharing-config", {
@@ -27,5 +27,6 @@ export const buildTreasuryTx = createServerFn({ method: "POST" })
     }
     const result = z.object({ transaction: z.string().min(10) }).parse(await response.json());
     inspectTreasuryTransaction(result.transaction, data.publicKey, data.mint);
+    await simulateTreasuryTransaction(result.transaction, data.mint);
     return { connected: false as const, tx: result.transaction };
   });

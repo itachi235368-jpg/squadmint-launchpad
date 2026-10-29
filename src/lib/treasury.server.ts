@@ -27,19 +27,34 @@ function configAddress(mint: string) {
   return PublicKey.findProgramAddressSync([new TextEncoder().encode("sharing-config"), new PublicKey(mint).toBytes()], new PublicKey(FEES))[0];
 }
 
-export async function readTreasuryState(mint: string) {
-  const address = configAddress(mint).toBase58();
-  const result = await solanaCall<{ value: { owner: string; data: [string, string] } | null }>("getAccountInfo", [address, { encoding: "base64", commitment: "confirmed" }]);
-  if (!result.value) return { connected: false, address };
-  const data = decode(result.value.data[0]);
-  if (result.value.owner !== FEES || data.length < 80 || !matches(data, CONFIG)) throw new Error("Unexpected fee-sharing account");
+type ConfigAccount = { owner: string; data: [string, string] };
+
+function isTreasuryConfig(account: ConfigAccount | null, mint: string) {
+  if (!account) return false;
+  const data = decode(account.data[0]);
+  if (account.owner !== FEES || data.length < 80 || !matches(data, CONFIG)) throw new Error("Unexpected fee-sharing account");
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
   // Official Pump Fees IDL: bump, version, status, mint, admin, revoked, Vec<Shareholder>.
-  const connected = data.length >= 114 && data[10] === 1 && new PublicKey(data.slice(11, 43)).toBase58() === mint
+  return data.length >= 114 && data[10] === 1 && new PublicKey(data.slice(11, 43)).toBase58() === mint
     && data[75] === 1 && view.getUint32(76, true) === 1
     && new PublicKey(data.slice(80, 112)).toBase58() === TREASURY_WALLET
     && view.getUint16(112, true) === TREASURY_SHARE_BPS;
-  return { connected, address };
+}
+
+export async function readTreasuryState(mint: string) {
+  const address = configAddress(mint).toBase58();
+  const result = await solanaCall<{ value: ConfigAccount | null }>("getAccountInfo", [address, { encoding: "base64", commitment: "confirmed" }]);
+  return { connected: isTreasuryConfig(result.value, mint), address };
+}
+
+export async function simulateTreasuryTransaction(tx: string, mint: string) {
+  const result = await solanaCall<{ value: { err: unknown; accounts?: Array<ConfigAccount | null> } }>("simulateTransaction", [tx, {
+    encoding: "base64", sigVerify: false, replaceRecentBlockhash: true, commitment: "confirmed",
+    accounts: { encoding: "base64", addresses: [configAddress(mint).toBase58()] },
+  }]);
+  if (result.value.err || !isTreasuryConfig(result.value.accounts?.[0] ?? null, mint)) {
+    throw new Error("Treasury approval did not pass Solana's checks. Make sure this is the creator wallet and the allocation is still editable.");
+  }
 }
 
 /** Reject unrelated programs, transfers, extra signers and a different final fee allocation. */
@@ -60,6 +75,7 @@ export function inspectTreasuryTransaction(encoded: string, user: string, mint: 
       throw new Error("Unexpected fee-sharing network fee");
     }
     if (program === FEES && (matches(data, CREATE) || matches(data, UPDATE))) {
+      if (matches(data, CREATE) && data.length !== 8) throw new Error("Unexpected fee-sharing creation arguments");
       if (keys[ix.accountKeyIndexes[2] ?? -1]?.toBase58() !== user
         || keys[ix.accountKeyIndexes[4] ?? -1]?.toBase58() !== mint
         || keys[ix.accountKeyIndexes[5] ?? -1]?.toBase58() !== configAddress(mint).toBase58()) throw new Error("Fee-sharing coin or authority mismatch");

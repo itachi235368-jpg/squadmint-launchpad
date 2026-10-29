@@ -21,7 +21,13 @@ export const Route = createFileRoute("/token/$ticker")({
           { property: "og:title", content: `$${loaderData.ticker} HQ — MINIONS` },
           { property: "og:description", content: `${loaderData.name} on MINIONS` },
         ]
-      : [{ title: "Unavailable — MINIONS" }, { name: "robots", content: "noindex" }],
+      : [
+          { title: "Coin unavailable — MINIONS" }, { name: "robots", content: "noindex" },
+          { name: "description", content: "This coin is not available in the MINIONS launch directory." },
+          { property: "og:title", content: "Coin unavailable — MINIONS" },
+          { property: "og:description", content: "This coin is not available in the MINIONS launch directory." },
+          { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+        ],
   }),
   component: TokenHQ,
 });

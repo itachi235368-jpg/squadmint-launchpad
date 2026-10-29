@@ -5,7 +5,7 @@ import { devBuySchema } from "@/lib/launch-rules";
 const toB64 = (buf: ArrayBuffer) => {
   const bytes = new Uint8Array(buf);
   let s = "";
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]!);
+  for (const byte of bytes) s += String.fromCharCode(byte);
   return btoa(s);
 };
 

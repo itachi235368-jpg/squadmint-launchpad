@@ -5,8 +5,19 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig({
+  vite: {
+    ssr: { noExternal: ["@pump-fun/pump-sdk", "@pump-fun/agent-payments-sdk", "@coral-xyz/anchor", "@coral-xyz/borsh"] },
+    resolve: {
+      // Solana's websocket dependency has no workerd export; use its web-standard build.
+      alias: {
+        "rpc-websockets": fileURLToPath(new URL("./node_modules/rpc-websockets/dist/index.browser.mjs", import.meta.url)),
+        "@coral-xyz/anchor": fileURLToPath(new URL("./node_modules/@coral-xyz/anchor/dist/browser/index.js", import.meta.url)),
+      },
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

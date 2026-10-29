@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { MINIONS, isTickerTaken } from "@/lib/data";
 import { PageHead, pillDark } from "@/components/ui-bits";
@@ -9,6 +9,8 @@ import { uploadMetadata, buildCreateTx, sendSignedTx } from "@/lib/launch.functi
 import { saveLaunchCoin } from "@/lib/coins.functions";
 import { coinsQueryOptions } from "@/lib/coins-query";
 import { parseDevBuy, curveFill, CURVE_GRADUATION_SOL } from "@/lib/launch-rules";
+import { TreasuryConnection } from "@/components/treasury-connection";
+import { requireConfirmation, TREASURY_WALLET } from "@/lib/treasury-rules";
 
 type Phantom = { publicKey?: { toString(): string }; connect(): Promise<{ publicKey: { toString(): string } }>; signTransaction<T>(tx: T): Promise<T> };
 const getPhantom = () => (window as unknown as { solana?: Phantom & { isPhantom?: boolean } }).solana;
@@ -68,6 +70,7 @@ function Launch() {
   const build = useServerFn(buildCreateTx);
   const send = useServerFn(sendSignedTx);
   const save = useServerFn(saveLaunchCoin);
+  const queryClient = useQueryClient();
 
   async function connect() {
     const p = getPhantom();
@@ -97,9 +100,13 @@ function Launch() {
       const vtx = VersionedTransaction.deserialize(b64ToBytes(tx));
       vtx.sign([mint]);
       setStatus("Approve the launch in your wallet…");
-      const signed = await getPhantom()!.signTransaction(vtx);
+       const signingWallet = getPhantom();
+       if (!signingWallet) throw new Error("Wallet disconnected. Reconnect before launching.");
+       const signed = await signingWallet.signTransaction(vtx);
       setStatus("Sending to Solana…");
       const r = await send({ data: { tx: bytesToB64(signed.serialize()) } });
+       setResult({ mint: mint.publicKey.toBase58(), ...r });
+       requireConfirmation(r);
       setStatus("Listing your coin on the quest board…");
       try {
         await save({
@@ -116,6 +123,7 @@ function Launch() {
           },
         });
         setSavedNote(null);
+         await queryClient.invalidateQueries({ queryKey: ["coins"] });
       } catch (saveErr) {
         console.error("saveLaunchCoin failed:", saveErr);
         setSavedNote(saveErr instanceof Error ? saveErr.message : "Could not save the coin to the quest board.");
@@ -202,6 +210,7 @@ function Launch() {
             </button>
             <button disabled={taken || busy} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>{busy ? status ?? "Working…" : "Launch coin & deploy squad"}</button>
             <p className="mt-3 text-xs text-muted-foreground">Launches on Pump.fun from your wallet. You pay the network fee plus your dev buy.</p>
+             <p className="mt-2 text-xs text-muted-foreground">After launch, approve a separate permanent allocation of 100% of future creator fees to treasury {TREASURY_WALLET.slice(0, 6)}…{TREASURY_WALLET.slice(-4)}. Until confirmed, treasury fee sharing is not connected.</p>
             {error && <p className="mt-4 rounded-xl border border-destructive p-4 text-sm text-destructive">{error}</p>}
             {savedNote && result && (
               <p className="mt-3 rounded-xl border border-accent/50 p-3 text-xs text-muted-foreground">
@@ -218,6 +227,7 @@ function Launch() {
                 </div>
               </div>
             )}
+             {result?.confirmed && <TreasuryConnection key={result.mint} mint={result.mint} />}
           </div>
         </form>
         <aside className="lg:pt-8">
@@ -227,6 +237,7 @@ function Launch() {
               <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full border bg-secondary">{img ? <img src={img} alt="" className="h-full w-full object-cover" /> : "?"}</div>
               <div><div className="font-display text-lg">{name || "Your coin"}</div><div className="font-mono text-xs text-muted-foreground">${ticker || "TICKER"} · {pair}</div></div>
             </div>
+       <TreasuryConnection />
             <div className="mt-4 border-t pt-4 text-xs text-muted-foreground">Style: {style}<br />Squad: 5 minions · starts raiding at $10K</div>
           </div>
         </aside>

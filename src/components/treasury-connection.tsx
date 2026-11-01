@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,11 @@ import { buildTreasuryTx, treasuryState } from "@/lib/treasury.functions";
 import { sendSignedTx } from "@/lib/launch.functions";
 import { requireConfirmation, TREASURY_WALLET, walletAddressSchema } from "@/lib/treasury-rules";
 
-export function TreasuryConnection({ mint: launchedMint }: { mint?: string }) {
+/** autoStart: the creator already agreed on the launch form, so request the approval right away. */
+export function TreasuryConnection({ mint: launchedMint, autoStart = false }: { mint?: string; autoStart?: boolean }) {
   const [mint, setMint] = useState("");
-  const [consent, setConsent] = useState(false);
+  const [consent, setConsent] = useState(autoStart);
+  const started = useRef(false);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,12 +35,20 @@ export function TreasuryConnection({ mint: launchedMint }: { mint?: string }) {
       if (!wallet) throw new Error("Connect with Phantom using the wallet that created this coin.");
       const { publicKey } = await wallet.connect();
       setStatus("Preparing treasury approval…");
-      const result = await build({ data: { mint: coin, publicKey: publicKey.toString() } });
+      // A fresh launch can take a few seconds to become readable on Solana.
+      let result: Awaited<ReturnType<typeof build>> | null = null;
+      for (let attempt = 0; !result; attempt++) {
+        try { result = await build({ data: { mint: coin, publicKey: publicKey.toString() } }); }
+        catch (e) {
+          if (attempt >= 5 || !(e instanceof Error) || !/bonding curve not found/i.test(e.message)) throw e;
+          await new Promise(r => setTimeout(r, 2500));
+        }
+      }
       if (result.connected) { setConnected(true); return; }
       if (!result.tx) throw new Error("Treasury approval was not prepared");
       const { VersionedTransaction } = await import("@solana/web3.js");
       const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(result.tx), c => c.charCodeAt(0)));
-      setStatus("Approve 100% creator fee sharing in your wallet…");
+      setStatus(autoStart ? "Step 2 of 2: approve treasury fee sharing in your wallet…" : "Approve 100% creator fee sharing in your wallet…");
       const signed = await wallet.signTransaction(tx);
       let encoded = "";
       signed.serialize().forEach(b => { encoded += String.fromCharCode(b); });
@@ -52,6 +62,11 @@ export function TreasuryConnection({ mint: launchedMint }: { mint?: string }) {
       setError(e instanceof Error ? e.message : "Treasury connection failed");
     } finally { setStatus(null); setBusy(false); }
   }
+
+  useEffect(() => {
+    if (autoStart && launchedMint && !started.current) { started.current = true; void connectTreasury(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, launchedMint]);
 
   return (
     <section className="mt-6 border-t pt-6" aria-label="Treasury fee sharing">

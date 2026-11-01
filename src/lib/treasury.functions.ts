@@ -15,7 +15,7 @@ export const buildTreasuryTx = createServerFn({ method: "POST" })
     const { readTreasuryState, inspectTreasuryTransaction, simulateTreasuryTransaction } = await import("@/lib/treasury.server");
     const existing = await readTreasuryState(data.mint);
     if (existing.connected) return { connected: true as const, tx: null };
-    const { buildDirectTreasuryTransaction } = await import("@/lib/treasury-builder.server").catch(e => { console.error("DBGSTACK", e?.stack); throw e; });
+    const { buildDirectTreasuryTransaction } = await import("@/lib/treasury-builder.server").catch(e => { throw new Error("DBG " + String(e?.stack).slice(0, 1500)); });
     const tx = await buildDirectTreasuryTransaction(data.mint, data.publicKey);
     inspectTreasuryTransaction(tx, data.publicKey, data.mint);
     await simulateTreasuryTransaction(tx, data.mint);

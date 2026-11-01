@@ -14,3 +14,5 @@
 - Launches reach the coins table only through `saveLaunchCoin` in `src/lib/coins.functions.ts`, which verifies the mint exists and the transaction confirmed on Solana before writing; the table has no public INSERT policy. Display market cap as "—" and a "NEW" tag until real on-chain pricing is wired — never show invented numbers there.
 - Treasury fee sharing uses Pump.fun's official sharing-config transaction builder in server-only helpers; inspect the transaction before requesting the creator signature, then verify the finalized sharing-config account before reporting a connection. This avoids trusting builder metadata or submission alone.
 - Resolve Solana's rpc-websockets dependency to its browser implementation during bundling because its package has no Worker export.
+- Keep CommonJS-only packages (e.g. @coral-xyz/borsh) out of `ssr.noExternal`; inlining them in dev SSR fails with "exports is not defined".
+- Launch requires treasury consent up front and then auto-requests the creator's fee-sharing signature, so no coin silently skips the treasury step.

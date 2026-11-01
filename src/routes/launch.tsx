@@ -66,6 +66,7 @@ function Launch() {
   const [result, setResult] = useState<{ mint: string; signature: string; confirmed: boolean } | null>(null);
   const [savedNote, setSavedNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [treasuryConsent, setTreasuryConsent] = useState(false);
   const upload = useServerFn(uploadMetadata);
   const build = useServerFn(buildCreateTx);
   const send = useServerFn(sendSignedTx);
@@ -84,6 +85,7 @@ function Launch() {
   async function launch() {
     setError(null); setResult(null);
     if (!file) { setError("Please upload a mascot image."); return; }
+    if (!treasuryConsent) { setError("Please agree to route creator fees to the treasury."); return; }
     setBusy(true);
     try {
       const pk = wallet ?? (await connect());
@@ -99,7 +101,7 @@ function Launch() {
       const { tx } = await build({ data: { publicKey: pk, mint: mint.publicKey.toBase58(), name, symbol: ticker, uri, devBuySol: dev } });
       const vtx = VersionedTransaction.deserialize(b64ToBytes(tx));
       vtx.sign([mint]);
-      setStatus("Approve the launch in your wallet…");
+      setStatus("Step 1 of 2: approve the launch in your wallet…");
        const signingWallet = getPhantom();
        if (!signingWallet) throw new Error("Wallet disconnected. Reconnect before launching.");
        const signed = await signingWallet.signTransaction(vtx);
@@ -208,9 +210,12 @@ function Launch() {
             <button type="button" onClick={() => void connect()} className="mb-3 w-full rounded-full border py-3 text-sm font-semibold">
               {wallet ? `Wallet connected · ${wallet.slice(0, 4)}…${wallet.slice(-4)}` : "Connect wallet"}
             </button>
-            <button disabled={taken || busy} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>{busy ? status ?? "Working…" : "Launch coin & deploy squad"}</button>
+            <button disabled={taken || busy || !treasuryConsent} className={cn(pillDark, "w-full py-3.5 disabled:opacity-40")}>{busy ? status ?? "Working…" : "Launch coin & deploy squad"}</button>
             <p className="mt-3 text-xs text-muted-foreground">Launches on Pump.fun from your wallet. You pay the network fee plus your dev buy.</p>
-             <p className="mt-2 text-xs text-muted-foreground">After launch, approve a separate permanent allocation of 100% of future creator fees to treasury {TREASURY_WALLET.slice(0, 6)}…{TREASURY_WALLET.slice(-4)}. Until confirmed, treasury fee sharing is not connected.</p>
+            <label className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
+              <input type="checkbox" required checked={treasuryConsent} disabled={busy} onChange={(e) => setTreasuryConsent(e.target.checked)} className="mt-0.5 accent-primary" />
+              <span>I agree that 100% of future creator fees go permanently to the minions.quest treasury {TREASURY_WALLET.slice(0, 6)}…{TREASURY_WALLET.slice(-4)}. Right after launch your wallet asks for a second approval to lock this in.</span>
+            </label>
             {error && <p className="mt-4 rounded-xl border border-destructive p-4 text-sm text-destructive">{error}</p>}
             {savedNote && result && (
               <p className="mt-3 rounded-xl border border-accent/50 p-3 text-xs text-muted-foreground">
@@ -227,7 +232,7 @@ function Launch() {
                 </div>
               </div>
             )}
-             {result?.confirmed && <TreasuryConnection key={result.mint} mint={result.mint} />}
+             {result?.confirmed && <TreasuryConnection key={result.mint} mint={result.mint} autoStart />}
           </div>
         </form>
         <aside className="lg:pt-8">

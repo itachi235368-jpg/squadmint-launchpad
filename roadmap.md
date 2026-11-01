@@ -6,6 +6,6 @@
 - [x] Launch form: real Pump.fun launch (image storage, wallet connect, Solana send); dev buy accepts any amount.
 - [x] Bonding curve set to 85 SOL to graduate; launch preview and wording follow that figure.
 - [x] Save confirmed launches to the backend coins table and show real coins on home, coins and token pages.
-- [ ] Add creator-approved treasury fee sharing after launch, with confirmation, receipt and retry for existing coins.
-- [ ] Resolve the Solana library packaging error and verify the treasury approval flow.
+- [x] Treasury fee sharing: launch requires agreement, then auto-requests the creator's approval right after launch; retry for existing coins.
+- [x] Resolve the Solana library packaging error; treasury approval verified up to the wallet prompt.
 

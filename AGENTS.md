@@ -16,3 +16,4 @@
 - Resolve Solana's rpc-websockets dependency to its browser implementation during bundling because its package has no Worker export.
 - Keep CommonJS-only packages (e.g. @coral-xyz/borsh) out of `ssr.noExternal`; inlining them in dev SSR fails with "exports is not defined".
 - Launch requires treasury consent up front and then auto-requests the creator's fee-sharing signature, so no coin silently skips the treasury step.
+- Resolve older @solana/codecs*/options packages to their browser builds via the vite resolve plugin (nested copies included) and bundle @solana/spl-token by absolute path; they lack a Worker export and break the production build.

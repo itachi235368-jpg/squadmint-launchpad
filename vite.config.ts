@@ -6,7 +6,6 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { fileURLToPath } from "node:url";
-import { createRequire } from "node:module";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -16,15 +15,15 @@ const solanaBrowserBuilds = {
   name: "solana-browser-builds",
   enforce: "pre" as const,
   resolveId(source: string, importer?: string) {
-    if (source.includes("@solana/codecs")) console.log("SBB", source, importer);
     if (!/^@solana\/(codecs[\w-]*|options|errors)$/.test(source)) return null;
-    try {
-      const req = createRequire(importer ?? import.meta.url);
-      const pkgDir = dirname(req.resolve(`${source}/package.json`));
-      const file = join(pkgDir, "dist/index.browser.mjs");
-      return existsSync(file) ? file : null;
-    } catch {
-      return null;
+    // Walk up from the importer to find the nearest copy (package.json isn't exported, so no require.resolve).
+    let dir = importer ? dirname(importer) : process.cwd();
+    for (;;) {
+      const file = join(dir, "node_modules", source, "dist/index.browser.mjs");
+      if (existsSync(file)) return file;
+      const parent = dirname(dir);
+      if (parent === dir) return null;
+      dir = parent;
     }
   },
 };

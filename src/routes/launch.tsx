@@ -56,7 +56,8 @@ function Launch() {
   const [img, setImg] = useState<string | null>(null);
   const [style, setStyle] = useState("Pixel Art");
   const [pair, setPair] = useState("SOL");
-  const [dev, setDev] = useState(0.5);
+  const [devText, setDevText] = useState("0.5");
+  const dev = parseDevBuy(devText);
   const [file, setFile] = useState<File | null>(null);
   const [desc, setDesc] = useState("");
   const [links, setLinks] = useState({ twitter: "", telegram: "", website: "" });
@@ -195,8 +196,8 @@ function Launch() {
           <Step n={4} title="Dev buy">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Optional</span><span className="font-mono">{dev} {pair}</span></div>
             <div className="relative mt-2">
-              <input type="number" inputMode="decimal" min={0} step="any" value={dev} placeholder="0"
-                onChange={(e) => setDev(parseDevBuy(e.target.value))} className={cn(field, "pr-16 font-mono")} />
+              <input type="number" inputMode="decimal" min={0} step="any" value={devText} placeholder="0"
+                onChange={(e) => setDevText(e.target.value)} className={cn(field, "pr-16 font-mono")} />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">SOL</span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">Any amount you like — you only pay what you can cover.</p>

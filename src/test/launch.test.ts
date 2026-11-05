@@ -24,6 +24,14 @@ describe("dev buy amount", () => {
     expect(parseDevBuy("-5")).toBe(0);
     expect(parseDevBuy("abc")).toBe(0);
   });
+
+  it("keeps a typed decimal exactly as written, so 1.0 never becomes 10", () => {
+    expect(parseDevBuy("1.0")).toBe(1);
+    expect(parseDevBuy("0.05")).toBe(0.05);
+    expect(parseDevBuy("10.5")).toBe(10.5);
+    expect(parseDevBuy("1.")).toBe(1);
+    expect(devBuySchema.parse(parseDevBuy("1.0"))).toBe(1);
+  });
 });
 
 describe("bonding curve", () => {

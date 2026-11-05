@@ -13,6 +13,13 @@ export default defineConfig({
     resolve: {
       // Solana's websocket dependency has no workerd export; use its web-standard build.
       alias: {
+        // These @solana packages only export browser/node builds (no workerd/default condition).
+        ...Object.fromEntries(
+          ["codecs", "codecs-data-structures", "codecs-strings", "options"].map((p) => [
+            `@solana/${p}`,
+            fileURLToPath(new URL(`./node_modules/@solana/${p}/dist/index.browser.mjs`, import.meta.url)),
+          ]),
+        ),
         "rpc-websockets": fileURLToPath(new URL("./node_modules/rpc-websockets/dist/index.browser.mjs", import.meta.url)),
         "@coral-xyz/anchor": fileURLToPath(new URL("./node_modules/@coral-xyz/anchor/dist/browser/index.js", import.meta.url)),
       },

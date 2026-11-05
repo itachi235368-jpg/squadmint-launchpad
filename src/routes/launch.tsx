@@ -56,7 +56,8 @@ function Launch() {
   const [img, setImg] = useState<string | null>(null);
   const [style, setStyle] = useState("Pixel Art");
   const [pair, setPair] = useState("SOL");
-  const [dev, setDev] = useState(0.5);
+  const [devText, setDevText] = useState("0.5");
+  const dev = parseDevBuy(devText);
   const [file, setFile] = useState<File | null>(null);
   const [desc, setDesc] = useState("");
   const [links, setLinks] = useState({ twitter: "", telegram: "", website: "" });

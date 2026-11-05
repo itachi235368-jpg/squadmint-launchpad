@@ -16,6 +16,7 @@ const solanaBrowserBuilds = {
   name: "solana-browser-builds",
   enforce: "pre" as const,
   resolveId(source: string, importer?: string) {
+    if (source.includes("@solana/codecs")) console.log("SBB", source, importer);
     if (!/^@solana\/(codecs[\w-]*|options|errors)$/.test(source)) return null;
     try {
       const req = createRequire(importer ?? import.meta.url);

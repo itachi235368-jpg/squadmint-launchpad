@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   vite: {
-    ssr: { noExternal: ["@pump-fun/pump-sdk", "@pump-fun/agent-payments-sdk", "@coral-xyz/anchor"] },
+    ssr: { noExternal: ["@pump-fun/pump-sdk", "@pump-fun/agent-payments-sdk", "@coral-xyz/anchor", "@solana/spl-token", "@solana/spl-token-metadata", /^@solana\/codecs/, "@solana/options"] },
     resolve: {
       // Solana's websocket dependency has no workerd export; use its web-standard build.
       alias: {

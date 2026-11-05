@@ -6,20 +6,35 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+
+// Some older @solana/* packages (codecs, options, …) only export "browser"/"node" builds with no
+// workerd/default condition, and nested copies exist. Resolve them to their browser build.
+const solanaBrowserBuilds = {
+  name: "solana-browser-builds",
+  enforce: "pre" as const,
+  resolveId(source: string, importer?: string) {
+    if (!/^@solana\/(codecs[\w-]*|options|errors)$/.test(source)) return null;
+    try {
+      const req = createRequire(importer ?? import.meta.url);
+      const pkgDir = dirname(req.resolve(`${source}/package.json`));
+      const file = join(pkgDir, "dist/index.browser.mjs");
+      return existsSync(file) ? file : null;
+    } catch {
+      return null;
+    }
+  },
+};
 
 export default defineConfig({
   vite: {
-    ssr: { noExternal: ["@pump-fun/pump-sdk", "@pump-fun/agent-payments-sdk", "@coral-xyz/anchor", "@solana/spl-token", "@solana/spl-token-metadata", /^@solana\/codecs/, "@solana/options"] },
+    plugins: [solanaBrowserBuilds],
+    ssr: { noExternal: ["@pump-fun/pump-sdk", "@pump-fun/agent-payments-sdk", "@coral-xyz/anchor", "@solana/spl-token", "@solana/spl-token-metadata", /^@solana\/codecs/, "@solana/options", "@solana/errors"] },
     resolve: {
       // Solana's websocket dependency has no workerd export; use its web-standard build.
       alias: {
-        // These @solana packages only export browser/node builds (no workerd/default condition).
-        ...Object.fromEntries(
-          ["codecs", "codecs-data-structures", "codecs-strings", "options"].map((p) => [
-            `@solana/${p}`,
-            fileURLToPath(new URL(`./node_modules/@solana/${p}/dist/index.browser.mjs`, import.meta.url)),
-          ]),
-        ),
         "rpc-websockets": fileURLToPath(new URL("./node_modules/rpc-websockets/dist/index.browser.mjs", import.meta.url)),
         "@coral-xyz/anchor": fileURLToPath(new URL("./node_modules/@coral-xyz/anchor/dist/browser/index.js", import.meta.url)),
       },

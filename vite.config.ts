@@ -35,6 +35,8 @@ export default defineConfig({
     resolve: {
       // Solana's websocket dependency has no workerd export; use its web-standard build.
       alias: {
+        // Absolute path forces the SSR step to bundle it (so its @solana/codecs imports hit the plugin above).
+        "@solana/spl-token": fileURLToPath(new URL("./node_modules/@solana/spl-token/lib/esm/index.js", import.meta.url)),
         "rpc-websockets": fileURLToPath(new URL("./node_modules/rpc-websockets/dist/index.browser.mjs", import.meta.url)),
         "@coral-xyz/anchor": fileURLToPath(new URL("./node_modules/@coral-xyz/anchor/dist/browser/index.js", import.meta.url)),
       },
